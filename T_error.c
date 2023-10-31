@@ -104,7 +104,8 @@ main (int argc, char *argv[])
                     phip_approx = phi - omega - dL_dI(N, Ap, Bp, phip);
 
                     /* (3) Find max approximation error over all points on torus I */
-                    error = constrainAngle(phip_approx - phip);
+					error = constrainAngle(phip_approx - phip);
+					error = (error<M_PI ? error : 2*M_PI - error);
                     if(error>max_error_tor) max_error_tor = error;
                     /*
                     printf("Num. SM: (%f %f) -> %f \t Approx. SM: (%f %f) -> %f\n", 
@@ -118,7 +119,7 @@ main (int argc, char *argv[])
                 //printf("Max error for torus %d is: %f\n", (int)I, max_error_tor);
                 if(max_error_tor>max_error) max_error = max_error_tor;
             }
-            printf("%d %d %f\n", N, M, 2*M_PI - max_error);
+            printf("%d %d %f\n", N, M, max_error);
         }
 		printf("\n");
 	}
