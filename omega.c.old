@@ -1,0 +1,122 @@
+/** \file omega.c
+  * \brief Given an action \f$ I \f$, find the shift of the transition map
+  *
+  * Let an action \f$ I \f$ be fixed. Read a set of points mapped by the
+  * transition map: \f$ (I,\phi) \to (I', \phi') \f$. For each point, find the
+  * shift of the transition map,
+  * \f\[ \omega(I) = \phi-\phi'-pd{Lstar}{I}. \f\]
+  * Finally, average \f$ \omega(I) \f$ over all angles, and print result to
+  * stdout.
+  *
+  * NOTES: 
+  *		In principle, \f$ \omega(I) \f$ should be constant w.r.t. \f$ \phi \f$.
+  *
+  * USAGE:	./omega > omega.res
+  *
+  * CALLED BY:	
+  *
+  */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_spline.h>
+
+const int NPOINTS = 100;
+double A2p, B2p, A4p, B4p;	/* derivative of Fourier coefficients wrt I */
+
+typedef struct
+{
+    double *d;
+    double *coef;
+    double *work;
+}
+polynomial_state_t;
+
+// Find derivative of Fourier coefficients wrt I, i.e.
+// \od{A_n}{I}, \od{B_n}{I}
+double dcoef_dI(const char *filename, double I)
+{
+  const int n=5;
+  double xi, yi, x[n], y[n];
+
+  /* auxiliary variables */
+  double *xp, *yp;
+  FILE *fp;
+
+   /* Read input curve */
+    xp = x; yp = y;
+    fp = fopen(filename, "r");
+    while(fscanf(fp,"%le %le", xp, yp) != EOF) {
+        /* advance pointers */
+        xp ++; yp ++;
+    }
+    fclose(fp);
+  
+  {
+    gsl_interp_accel *acc
+      = gsl_interp_accel_alloc ();
+    gsl_spline *spline
+      = gsl_spline_alloc (gsl_interp_polynomial, n);
+
+    gsl_spline_init (spline, x, y, n);
+
+    /* Obtain coefficients of interpolating polynomial P(x) */
+    const polynomial_state_t *state = (const polynomial_state_t *) (spline ->
+            interp -> state);
+    double d0, d1, d2, d3, d4;
+    //d0 = state->d[0];
+    d1 = state->d[1];
+    d2 = state->d[2];
+
+	yi=d1+d2*(2*I-5);
+	//printf("Fourier coef: %.8f\n", yi);
+
+	//xi = I;
+	//yi = gsl_spline_eval (spline, xi, acc);
+
+    gsl_spline_free (spline);
+    gsl_interp_accel_free (acc);
+  }
+  return yi;
+}
+
+// \pd{L^*}{I}(I,\phi')
+double dL(double phi)
+{
+	return A2p/2*sin(2*phi) + A4p/4*sin(4*phi) \
+		- B2p/2*cos(2*phi) - B4p/4*cos(4*phi);
+}
+
+int
+main (int argc, char *argv[])
+{
+  double I=2;
+  double omega;
+
+  int i;
+  double phi,phip;
+  FILE *fp;
+
+  if(argc != 1)
+  {
+	  fprintf(stderr, "Num of args incorrect. Usage: %s\n", argv[0]);
+	  exit(EXIT_FAILURE);
+  }
+  
+  A2p = dcoef_dI("A2_scaled.dat", I);
+  B2p = dcoef_dI("B2_scaled.dat", I);
+  A4p = dcoef_dI("A4_scaled.dat", I);
+  B4p = dcoef_dI("B4_scaled.dat", I);
+
+  fp = fopen("phi_phip_3_3", "r");
+  while(fscanf(fp, "%lf %lf\n", &phi, &phip) == 2)
+  {
+	  omega = phi-phip-dL(phip);
+	  //omega = phi-phip;
+	  if (omega<0) omega += 2*M_PI;
+	  printf("%f %f %f\n", I, phip, omega);
+  }
+  return 0;
+}
