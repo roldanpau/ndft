@@ -38,12 +38,12 @@ double iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
 
     phip_old = 4*M_PI;
     phip = phi - omega;
-    printf("phip: %f\n", phip);
+    //printf("phip: %f\n", phip);
     while(fabs(phip - phip_old)>1.e-5)
     {
         phip_old = phip;
         phip = phi - omega - dL_dI(N, Ap, Bp, phip);
-        printf("phip: %f\n", phip);
+        //printf("phip: %f\n", phip);
     } 
     return constrainAngle(phip);
 }
@@ -101,8 +101,8 @@ main (int argc, char *argv[])
     omega_eval(ntori,ddOmega,M,I,&omega);
 
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
-    Ip = I + dL_dphi(N, A, B, phip);
     phip = iteration(N, Ap, Bp, omega, phi);
+    Ip = I + dL_dphi(N, A, B, phip);
 
     printf("%f %f\n", Ip, phip);
     return 0;
