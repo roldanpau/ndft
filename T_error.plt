@@ -6,7 +6,7 @@ set title "Error in the phi component"
 set hidden3d
 
 set xlabel "N (degree of Fourier expansion)"
-set ylabel "M (degree of Taylor expansion)"
+set ylabel "L (degree of Taylor expansion)"
 set zlabel "error"
 
 set ytics 0,1,4

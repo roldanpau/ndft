@@ -17,6 +17,16 @@
 
 static const char ddOmega_FILE[] = "ddOmega.res";
 
+/** Constrain angle \f$ x \in \[-2\pi, 2\pi) \f$ to be in \f$ \[0, 2\pi\) \f$.
+ *
+ */
+double constrainAngle(double x){
+    x = fmod(x,2*M_PI);
+    if (x < 0)
+        x += 2*M_PI;
+    return x;
+}
+
 void read_omegas(size_t ntori, double omega_all[ntori]) 
 {
 	/* auxiliary variables */

@@ -2,6 +2,8 @@
   * \brief Functions to compute Taylor series of \f$\omega(I)\f$ and write it to file.
   */
 
+double constrainAngle(double x);
+
 void read_omegas(size_t ntori, double omega_all[ntori]); 
 
 void compute_T(size_t ntori, double omega_all[ntori], double dd[ntori]);

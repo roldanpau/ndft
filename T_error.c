@@ -20,13 +20,6 @@
 #include "FT_module.h"
 #include "T_module.h"
 
-double constrainAngle(double x){
-    x = fmod(x,2*M_PI);
-    if (x < 0)
-        x += 2*M_PI;
-    return x;
-}
-
 int
 main (int argc, char *argv[])
 {

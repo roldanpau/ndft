@@ -1,14 +1,16 @@
 progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
 		dLstar_dI Lstar omega \
 		SM_given_I FT FT_error_given_I FT_error \
-		T T_error
+		T T_error \
+		SM
 
 objects = FT.o FT_module.o \
 		  FT_error.o \
 		  dLstar_dI.o \
 		  omega.o \
 		  T.o T_module.o \
-		  T_error.o
+		  T_error.o \
+		  SM.o
 
 CFLAGS = -g
 LDFLAGS = -g
@@ -58,6 +60,8 @@ FT_error: FT_error.o FT_module.o
 T: T.o T_module.o 
 
 T_error: T_error.o T_module.o FT_module.o
+
+SM: SM.o FT_module.o T_module.o
 
 .PHONY : clean
 clean:

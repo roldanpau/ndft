@@ -60,7 +60,7 @@ main (int argc, char *argv[])
     /* Write Taylor series (divided differences) to file */
     write_T(ntori,dd);
 
-    /* Read FT series (divided differences) from file */
+    /* Read Taylor series (divided differences) from file */
     read_T(ntori,dd);
 
     /* Compute omega(I) for action value I */
