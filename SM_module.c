@@ -39,6 +39,31 @@ double iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
     return constrainAngle(phip);
 }
 
+/** \brief Iteratively find \f$ \phi' = F(\phi'; I, \phi) \f$.
+ *
+ *  Variable \f$ \phi' \f$ is defined implicitly by equation
+ *  \f\[ \phi' = \phi - \omega(I) - \pd{\gft}{I}(I, \phi'). \f\]
+ *  Iterate the right hand side, starting with 
+ *  \f\[ \phi'_0 = \phi - \omega(I), \f\]
+ *  until \f$ \phi' \f$ converges.
+ */
+double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
+		double phi, double a)
+{
+    double phip, phip_old;
+
+    phip_old = 4*M_PI;
+    phip = phi - omega;
+    //printf("phip: %f\n", phip);
+    while(fabs(phip - phip_old)>1.e-5)
+    {
+        phip_old = phip;
+        phip = phi - omega - a*dL_dI(N, Ap, Bp, phip);
+        //printf("phip: %f\n", phip);
+    } 
+    return constrainAngle(phip);
+}
+
 /**
   * \brief Compute the scattering map \f$ (I', \phi') = \sigma(I,\phi) \f$.
   *
@@ -85,6 +110,47 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
     *phip = iteration(N, Ap, Bp, omega, phi);
     *Ip = I + dL_dphi(N, A, B, *phip);
+}
+
+
+/**
+  * \brief Compute the damped scattering map, damped by non-integrability
+  * parameter \f$a\f$.
+  *
+  * NOTE:
+  *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
+  *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
+  */
+void damped_SM(int nfour, int ntori, double ddA[nfour][ntori], 
+		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
+		double *Ip, double *phip, double a)
+{
+	const int N=10;	/* Degree of Fourier expansion */
+	const int M=3;	/* Degree of Taylor expansion */
+
+	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
+	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
+
+    /* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
+	double Ap[N+1];	
+	double Bp[N+1];	
+
+    double omega;   /* Interpolated omega value at I */
+
+    /* Compute Fourier coefs A_n(I), B_n(I) for action value I */
+    coefs_eval(nfour,ntori,ddA,N,M,I,A);
+    coefs_eval(nfour,ntori,ddB,N,M,I,B);
+
+    /* Compute derivative of F. coefs A_n(I), B_n(I) for action value I */
+    dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);
+    dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
+
+    /* Compute omega(I) for action value I */
+    omega_eval(ntori,ddOmega,M,I,&omega);
+
+	/* Find the image (I', \phi') of (I,phi) by the transition map. */
+    *phip = iteration(N, Ap, Bp, omega, phi);
+    *Ip = I + a*dL_dphi(N, A, B, *phip);
 }
 
 
