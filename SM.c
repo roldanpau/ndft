@@ -18,35 +18,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>       // M_PI
 #include "FT_module.h"
 #include "T_module.h"
+#include "SM_module.h"
 
-
-/** \brief Iteratively find \f$ \phi' = F(\phi'; I, \phi) \f$.
- *
- *  Variable \f$ \phi' \f$ is defined implicitly by equation
- *  \f\[ \phi' = \phi - \omega(I) - \pd{\gft}{I}(I, \phi'). \f\]
- *  Iterate the right hand side, starting with 
- *  \f\[ \phi'_0 = \phi - \omega(I), \f\]
- *  until \f$ \phi' \f$ converges.
- */
-double iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega, 
-        double phi)
-{
-    double phip, phip_old;
-
-    phip_old = 4*M_PI;
-    phip = phi - omega;
-    //printf("phip: %f\n", phip);
-    while(fabs(phip - phip_old)>1.e-5)
-    {
-        phip_old = phip;
-        phip = phi - omega - dL_dI(N, Ap, Bp, phip);
-        //printf("phip: %f\n", phip);
-    } 
-    return constrainAngle(phip);
-}
 
 int
 main (int argc, char *argv[])
@@ -57,18 +32,6 @@ main (int argc, char *argv[])
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori];      /* divided differences of omega(I) */
-
-	const int N=10;	/* Degree of Fourier expansion */
-	const int M=3;	/* Degree of Taylor expansion */
-
-	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
-	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
-
-    /* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
-	double Ap[N+1];	
-	double Bp[N+1];	
-
-    double omega;   /* Interpolated omega value at I */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
@@ -89,21 +52,9 @@ main (int argc, char *argv[])
     /* Read Taylor series (divided differences) from file */
     read_T(ntori,ddOmega);
 
-    /* Compute Fourier coefs A_n(I), B_n(I) for action value I */
-    coefs_eval(nfour,ntori,ddA,N,M,I,A);
-    coefs_eval(nfour,ntori,ddB,N,M,I,B);
-
-    /* Compute derivative of F. coefs A_n(I), B_n(I) for action value I */
-    dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);
-    dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
-
-    /* Compute omega(I) for action value I */
-    omega_eval(ntori,ddOmega,M,I,&omega);
-
-	/* Find the image (I', \phi') of (I,phi) by the transition map. */
-    phip = iteration(N, Ap, Bp, omega, phi);
-    Ip = I + dL_dphi(N, A, B, phip);
-
+	/* Compute the SM: (I, phi) -> (Ip, phip) */
+	SM(nfour, ntori, ddA, ddB, ddOmega, I, phi, &Ip, &phip);
+	
     printf("%f %f\n", Ip, phip);
     return 0;
 }
