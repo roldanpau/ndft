@@ -1,3 +1,4 @@
+make
 for k in {3..7}
 do
 	# swap columns 1 and 2, and sort curve points according to phi_+
@@ -10,3 +11,8 @@ do
 	./fft curve_${k}_interp >coeffs_${k}.res 2> fft_${k}.res
 done
 
+gnuplot decay_An.plt
+gnuplot decay_Bn.plt
+
+mv decay_An.eps paper/images/
+mv decay_Bn.eps paper/images/

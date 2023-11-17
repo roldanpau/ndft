@@ -68,6 +68,8 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   * \brief Compute the scattering map \f$ (I', \phi') = \sigma(I,\phi) \f$.
   *
   * NOTE:
+  *		The degree of the Fourier-Taylor expansion used is \f$N=10, L=3\f$.
+  *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we don't iterate. In that case, the function silently
   *		returns \f$ (I, \phi) \f$ as the final condition.
@@ -118,6 +120,8 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
   * parameter \f$a\f$.
   *
   * NOTE:
+  *		The degree of the Fourier-Taylor expansion used is \f$N=10, L=3\f$.
+  *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
   */

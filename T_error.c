@@ -57,7 +57,7 @@ main (int argc, char *argv[])
     /* Read Taylor series (divided differences) from file */
     read_T(ntori,dd);
 
-	for(int N=1; N<=10; N++)	/* N = Degree of Fourier expansion */
+	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
         for(int M=0; M<ntori; M++)	/* M = Degree of Taylor expansion */
         {
