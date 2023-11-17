@@ -149,7 +149,7 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
     omega_eval(ntori,ddOmega,M,I,&omega);
 
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
-    *phip = iteration(N, Ap, Bp, omega, phi);
+    *phip = damped_iteration(N, Ap, Bp, omega, phi, a);
     *Ip = I + a*dL_dphi(N, A, B, *phip);
 }
 
