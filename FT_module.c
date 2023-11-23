@@ -316,3 +316,21 @@ double dL_dI(size_t N, double Ap[N+1], double Bp[N+1], double phi)
 	return res;
 }
 
+/**
+ * \brief Given \f$(I,\phi')\f$, find \f$\widetilde{L}(I,\phi')\f$
+ *
+ * @param[in] N		Degree of Fourier series
+ * @param[in] A		A = (A_0, A_1, ..., A_N), Fourier coeffs evaluated at I
+ * @param[in] B		B = (B_0, B_1, ..., B_N), Fourier coeffs evaluated at I
+ * @param[in] phip	Angle where to evaluate the function.
+ */
+double widetildeL(size_t N, double A[N+1], double B[N+1], double phip)
+{
+	double res = 0.0;
+	for(int n=1; n<=N; n++)
+	{
+		res = res - B[n]/n*cos(n*phip) + A[n]/n*sin(n*phip);
+	}
+	return res;
+}
+

@@ -26,3 +26,4 @@ void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 
 double dL_dphi(size_t N, double A[N+1], double B[N+1], double phi);
 double dL_dI(size_t N, double Ap[N+1], double Bp[N+1], double phi);
+double widetildeL(size_t N, double A[N+1], double B[N+1], double phip);
