@@ -9,6 +9,7 @@ progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
 objects = FT.o FT_module.o \
 		  FT_error.o \
 		  dLstar_dI.o \
+		  Lstar.o \
 		  omega.o \
 		  T.o T_module.o \
 		  T_error.o \
@@ -46,8 +47,7 @@ Fourier_coefs_given_I: Fourier_coefs_given_I.c
 
 dLstar_dI: dLstar_dI.o FT_module.o
 
-Lstar: Lstar.c
-	gcc -o Lstar Lstar.c -lgsl -lm
+Lstar: Lstar.o FT_module.o
 
 omega: omega.o FT_module.o
 

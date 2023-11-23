@@ -11,7 +11,7 @@
   *
   * NOTES: 
   *
-  * USAGE:	./explore
+  * USAGE:	./explore norbits niterations
   *
   */
 

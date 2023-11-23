@@ -78,8 +78,8 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
 		double *Ip, double *phip)
 {
-	const int N=10;	/* Degree of Fourier expansion */
-	const int M=3;	/* Degree of Taylor expansion */
+	const int N=2;	/* Degree of Fourier expansion */
+	const int M=2;	/* Degree of Taylor expansion */
 
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
@@ -129,8 +129,8 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
 		double *Ip, double *phip, double a)
 {
-	const int N=10;	/* Degree of Fourier expansion */
-	const int M=3;	/* Degree of Taylor expansion */
+	const int N=2;	/* Degree of Fourier expansion */
+	const int M=2;	/* Degree of Taylor expansion */
 
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
