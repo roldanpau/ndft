@@ -4,7 +4,9 @@ progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
 		T T_error \
 		SM \
 		explore \
-		phase_port_SM
+		phase_port_SM \
+		IM \
+		diffusion
 
 objects = FT.o FT_module.o \
 		  FT_error.o \
@@ -15,7 +17,9 @@ objects = FT.o FT_module.o \
 		  T_error.o \
 		  SM.o SM_module.o \
 		  explore.o \
-		  phase_port_SM.o
+		  phase_port_SM.o \
+		  IM.o IM_module.o \
+		  diffusion.o
 
 CFLAGS = -g
 LDFLAGS = -g
@@ -70,6 +74,10 @@ SM: SM.o SM_module.o FT_module.o T_module.o
 explore: explore.o SM_module.o FT_module.o T_module.o
 
 phase_port_SM: phase_port_SM.o SM_module.o FT_module.o T_module.o
+
+IM: IM.o IM_module.o T_module.o
+
+diffusion: diffusion.o SM_module.o FT_module.o T_module.o IM_module.o
 
 .PHONY : clean
 clean:

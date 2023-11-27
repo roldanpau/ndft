@@ -30,9 +30,9 @@ main (int argc, char *argv[])
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
 	const int ntori=5;		/* Number of tori used in numerical SM */
 
-	int norb=1000;	/* Number of orbits */
-	int nit=100;	/* Number of iterations of the SM */
-	double a=0.1;	/* Perturbation parameter (size of non-integrable part) */
+	int norb;	/* Number of orbits */
+	int nit;	/* Number of iterations of the SM */
+	double a;	/* Perturbation parameter (size of non-integrable part) */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
