@@ -17,7 +17,7 @@
 
 static const char ddOmega_FILE[] = "ddOmega.res";
 
-/** Constrain angle \f$ x \in \[-2\pi, 2\pi) \f$ to be in \f$ \[0, 2\pi\) \f$.
+/** Constrain angle \f$ x \in [-2\pi, 2\pi) \f$ to be in \f$ [0, 2\pi) \f$.
  *
  */
 double constrainAngle(double x){

@@ -1,8 +1,8 @@
 /** \file explore.c
   * \brief Explore how far can pseudo-orbits travel in the action variable.
   *
-  * Take a bunch of initial conditions in the 'middle' of the NHIM (\f$ I=4
-  * \f$) and iterate them by the SM a few times (say, 10 iterations). The goal
+  * Take a bunch of initial conditions on the torus \f$ I=I_0 \f$ of the NHIM
+  * and iterate them by the SM several times (say, 512 iterations). The goal
   * is to see how far in the action variable \f$ I \f$ they travel.
   *
   * For each pseudo-orbit 
@@ -11,7 +11,7 @@
   *
   * NOTES: 
   *
-  * USAGE:	./explore norbits niterations
+  * USAGE:	./explore I_0 norbits niterations
   *
   */
 
@@ -29,8 +29,9 @@ main (int argc, char *argv[])
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
 	const int ntori=5;		/* Number of tori used in numerical SM */
 
-	int norb=1000;	/* Number of orbits */
-	int nit=100;	/* Number of iterations of the SM */
+	double I0;		/* Initial conditions are all on torus I=I0 */
+	int norb;		/* Number of orbits */
+	int nit;		/* Number of iterations of the SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -39,15 +40,16 @@ main (int argc, char *argv[])
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
-    if(argc != 3)
+    if(argc != 4)
     {
 		fprintf(stderr, 
-				"Num of args incorrect. Usage: %s norbits niterations\n",
+				"Num of args incorrect. Usage: %s I_0 norbits niterations\n",
 				argv[0]);
         exit(EXIT_FAILURE);
     }
-	norb = atoi(argv[1]);
-	nit = atoi(argv[2]);
+	I0 = atof(argv[1]);
+	norb = atoi(argv[2]);
+	nit = atoi(argv[3]);
 
 	/* Array of final conditions (I_n, phi_n) */
 	double I_all[norb];
@@ -63,7 +65,7 @@ main (int argc, char *argv[])
 	for(int i=0; i<= norb; i++)
 	{
 		/* Initialize initial condition */
-		I = 4;				// Start in the middle of the NHIM
+		I = I0;				// Start in the middle of the NHIM
 		phi = i*2*M_PI/norb;
 
 		/* Iterate the SM a few times */
