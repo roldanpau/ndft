@@ -16,7 +16,7 @@ int
 main (void)
 {
   int i;
-  const int n=5;
+  const int n=7;
   double xi, yi, x[n], y[n];
 
   /* auxiliary variables */
@@ -26,7 +26,7 @@ main (void)
 
    /* Read input curve */
     xp = x; yp = y;
-    fp = fopen("B2_scaled.dat", "r");
+    fp = fopen("A2.res", "r");
     while(fscanf(fp,"%le %le", xp, yp) != EOF) {
         /* advance pointers */
         xp ++; yp ++;

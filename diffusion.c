@@ -36,7 +36,7 @@ main (int argc, char *argv[])
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
-    const double tol=0.5;       /* Tolerance to be at a min/max of the SM */
+    const double tol=0.2;       /* Tolerance to be at a min/max of the SM */
 
     if(argc != 3)
     {
@@ -55,11 +55,11 @@ main (int argc, char *argv[])
     read_T(ntori,ddOmega);
 
 	printf("%f %f %s\n", I, phi, "IM");
-    while(I<5)
+    while(I<6)
     {
         /* Here, trajactory is at a maximum of the SM */
 
-        while(!(fabs(phi-M_PI/2) < tol || fabs(phi-3*M_PI/2) < tol))
+        while(!(fabs(phi-1.75) < tol || fabs(phi-(M_PI+1.75)) < tol))
         {
             /* Compute the IM: (I, phi) -> (Ip, phip) */
             IM(I, phi, &Ip, &phip);

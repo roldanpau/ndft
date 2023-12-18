@@ -29,7 +29,7 @@
 int
 main (int argc, char *argv[])
 {
-	const int ntori=5;		/* Number of tori used in numerical SM */
+	const int ntori=7;		/* Number of tori used in numerical SM */
 
 	/* Table containing for all tori, their omega values */
 	double omega_all[ntori];	

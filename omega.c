@@ -29,7 +29,7 @@ int
 main (int argc, char *argv[])
 {
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=5;		/* Number of tori used in numerical SM */
+	const int ntori=7;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -68,8 +68,8 @@ main (int argc, char *argv[])
     dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);	/* Compute F. coefs A_n(I) for action value I */
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);	/* Compute F. coefs B_n(I) for action value I */
 
-	sprintf(filename_dom, "win_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-	sprintf(filename_rng, "win_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+	sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+	sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
 
 	fp_dom = fopen(filename_dom, "r");
 	fp_rng = fopen(filename_rng, "r");

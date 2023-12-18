@@ -25,7 +25,7 @@ int
 main (int argc, char *argv[])
 {
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=5;		/* Number of tori used in numerical SM */
+	const int ntori=7;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -62,14 +62,14 @@ main (int argc, char *argv[])
 			double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
 
 			max_error = 0.0;
-			for(I=2; I<7; I++)
+			for(I=1; I<8; I++)
 			{
 				/* Compute F. coefs A_n(I), B_n(I) for action value I */
 				coefs_eval(nfour,ntori,ddA,N,M,I,A);
 				coefs_eval(nfour,ntori,ddB,N,M,I,B);
 
-				sprintf(filename_dom, "win_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-				sprintf(filename_rng, "win_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+				sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+				sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
 
 				fp_dom = fopen(filename_dom, "r");
 				fp_rng = fopen(filename_rng, "r");
@@ -82,7 +82,7 @@ main (int argc, char *argv[])
 				while((fscanf(fp_dom,"%le %le %le", &Iaux, &phi, &t) != EOF) && 
 						(fscanf(fp_rng,"%le %le %le", &Ip, &phip, &t) != EOF))	
 				{
-					/* Scale I (I's are not scaled in win_%d_%d_dom_0.res) */
+					/* Scale I (I's are not scaled in curve1_%d_%d_dom_0.res) */
 					Iaux = Iaux*1000;
 					Ip = Ip*1000;
 				
@@ -102,7 +102,7 @@ main (int argc, char *argv[])
 				}
 				fclose(fp_dom);
 				fclose(fp_rng);
-				//printf("Max error for torus %d is: %f\n", (int)I, max_error_tor);
+				fprintf(stderr, "Max error for torus %d is: %f\n", (int)I, max_error_tor);
 				if(max_error_tor>max_error) max_error = max_error_tor;
 			}
 			printf("%d %d %f\n", N, M, max_error);

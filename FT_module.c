@@ -12,11 +12,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_spline.h>
 
+static const char A2_FILE[] = "A2.res";
+static const char B2_FILE[] = "B2.res";
 static const char ddA_FILE[] = "ddA.res";
 static const char ddB_FILE[] = "ddB.res";
+
+void write_Fourier_all_tori(size_t ntori, size_t nfour, 
+		double coefs_all[ntori][nfour], int four, const char *filename);
 
 /** 
  * \brief Read Fourier coefficients from files coeffs_*.res.
@@ -28,9 +34,10 @@ static const char ddB_FILE[] = "ddB.res";
  *
  * @param[in]   ntori	Number of tori
  * @param[in]   nfour	Number of Fourier coefficients computed by FFT
- * @param[in]   coefs_all	Table containing for each torus I, its Fourier coefs. A_n (or B_n).
- * @param[out]  dd  Fourier-Taylor series (div. difs. of Fourier coeffs).
- * 
+ * @param[out]  A_all	Table containing for each torus I, its Fourier coefs.
+ * A_n.
+ * @param[out]  B_all	Table containing for each torus I, its Fourier coefs.
+ * B_n.
  */
 void read_Fourier_coefs(size_t ntori, size_t nfour, 
 		double A_all[ntori][nfour], double B_all[ntori][nfour]) 
@@ -43,7 +50,7 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 
 	for(int i=0; i<ntori; i++)
 	{
-		sprintf(filename, "coeffs_%d.res", i+3);
+		sprintf(filename, "coeffs_%d.res", i+2);
 		Ap = A_all[i];
 		Bp = B_all[i];
 
@@ -62,6 +69,48 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 		}
 		fclose(fp);
 	}
+
+	write_Fourier_all_tori(ntori, nfour, A_all, 2, A2_FILE); 
+	write_Fourier_all_tori(ntori, nfour, B_all, 2, B2_FILE); 
+}
+
+/** 
+ * \brief Write Fourier coefficient `n' of each tori (torus=1,2,...,7).
+ *
+ * The file generated (e.g. A0.res) is used for inspection and plotted in
+ * interp_poly_A2.plt.
+ *
+ * @param[in]   ntori	Number of tori
+ * @param[in]   nfour	Number of Fourier coefficients computed by FFT
+ * @param[in]	coefs_all	Table containing for each torus I, its Fourier coefs.
+ * A_n/B_n.
+ *
+ * @param[in]	four	Fourier coefficient to write.
+ *
+ * @param[in]	filename	Name of file to write to (e.g. A0.res).
+ */
+void write_Fourier_all_tori(size_t ntori, size_t nfour, 
+		double coefs_all[ntori][nfour], int four, const char *filename) 
+{
+	const int n=ntori;
+	const int j=four;
+
+	double x[n], y[n];
+
+	/* auxiliary variables */
+	FILE *fp;
+
+	fp = fopen(filename, "w");
+
+	/* Write coefs */
+	for(int i=0; i<n; i++)
+	{
+		x[i] = i+1;			/* I */
+		y[i] = coefs_all[i][j];	/* A_j(I) or B_j(I) */
+		fprintf(fp, "%f %f\n", x[i], y[i]);
+	}
+
+	fclose(fp);
 }
 
 typedef struct
@@ -94,7 +143,7 @@ void compute_FT(size_t ntori, size_t nfour, double coefs_all[ntori][nfour],
 		/* input curve */
 		for(int i=0; i<n; i++)
         {
-            x[i] = i+2;			/* I */
+            x[i] = i+1;			/* I */
             y[i] = coefs_all[i][j];	/* A_j(I) or B_j(I) */
         }
       
@@ -191,33 +240,32 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 {
 	for(int j=0; j<=N; j++)
     {
-        double d0, d1, d2, d3, d4;
-        d0 = ddA[j][0];
-        d1 = ddA[j][1];
-        d2 = ddA[j][2];
-        d3 = ddA[j][3];
-        d4 = ddA[j][4];
+	const double I0=1;
+	const double I1=2;
+	const double I2=3;
+	const double I3=4;
 
         /* Interpolate F. coef A_j at I */
+        assert(M<=4);
         switch(M)
         {
             case 0:
-                A[j] = d0;
+                A[j] = ddA[j][0];
                 break;
             case 1:
-                A[j] = d0 + d1*(I-2);
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0);
                 break;
             case 2: 
-                A[j] = d0 + d1*(I-2) + d2*(I-2)*(I-3);
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1);
                 break;
             case 3:
-                A[j] = d0 + d1*(I-2) + d2*(I-2)*(I-3) +
-                    d3*(I-2)*(I-3)*(I-4);
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
+                    ddA[j][3]*(I-I0)*(I-I1)*(I-I2);
                 break;
             case 4:
-                A[j] = d0 + d1*(I-2) + d2*(I-2)*(I-3) +
-                    d3*(I-2)*(I-3)*(I-4) + 
-                    d4*(I-2)*(I-3)*(I-4)*(I-5);
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
+                    ddA[j][3]*(I-I0)*(I-I1)*(I-I2) + 
+                    ddA[j][4]*(I-I0)*(I-I1)*(I-I2)*(I-I3);
                 break;
             default:
                 break;
@@ -239,39 +287,34 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 		size_t M, double I, double Ap[N+1]) 
 {
-	double I0=2;
-	double I1=3;
-	double I2=4;
-	double I3=5;
+	const double I0=1;
+	const double I1=2;
+	const double I2=3;
+	const double I3=4;
+
 	for(int j=0; j<=N; j++)
     {
-        double d0, d1, d2, d3, d4;
-        d0 = ddA[j][0];
-        d1 = ddA[j][1];
-        d2 = ddA[j][2];
-        d3 = ddA[j][3];
-        d4 = ddA[j][4];
-
         /* Interpolate F. coef A_j' at I */
+        assert(M<=4);
         switch(M)
         {
             case 0:
                 Ap[j] = 0;
                 break;
             case 1:
-                Ap[j] = d1;
+                Ap[j] = ddA[j][1];
                 break;
             case 2: 
-                Ap[j] = d1 + d2*((I-I1)+(I-I0));
+                Ap[j] = ddA[j][1] + ddA[j][2]*((I-I1)+(I-I0));
                 break;
             case 3:
-                Ap[j] = d1 + d2*((I-I1)+(I-I0)) +
-					d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1));
+                Ap[j] = ddA[j][1] + ddA[j][2]*((I-I1)+(I-I0)) +
+					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1));
                 break;
             case 4:
-                Ap[j] =  d1 + d2*((I-I1)+(I-I0)) +
-					d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
-					d4*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+                Ap[j] =  ddA[j][1] + ddA[j][2]*((I-I1)+(I-I0)) +
+					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+					ddA[j][4]*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
 							(I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2));
                 break;
             default:

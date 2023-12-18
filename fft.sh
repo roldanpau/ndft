@@ -1,5 +1,5 @@
 make
-for k in {3..7}
+for k in {2..8}
 do
 	# swap columns 1 and 2, and sort curve points according to phi_+
 	awk -f swap.awk curve1_${k}_${k}_rng_0.res | sort -g -k 1,1 > curve_${k}

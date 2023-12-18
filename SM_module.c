@@ -13,6 +13,9 @@
 #include "FT_module.h"
 #include "T_module.h"
 
+const int N=2;	/* Degree of Fourier expansion */
+const int M=6;	/* Degree of Taylor expansion */
+
 
 /** \brief Iteratively find \f$ \phi' = F(\phi'; I, \phi) \f$.
  *
@@ -68,7 +71,8 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   * \brief Compute the scattering map \f$ (I', \phi') = \sigma(I,\phi) \f$.
   *
   * NOTE:
-  *		The degree of the Fourier-Taylor expansion used is \f$N=10, L=3\f$.
+  *		The degree of the Fourier-Taylor expansion used is \f$N, L\f$ (hardcoded
+  *		at the beginning of this file).
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we don't iterate. In that case, the function silently
@@ -78,9 +82,6 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
 		double *Ip, double *phip)
 {
-	const int N=2;	/* Degree of Fourier expansion */
-	const int M=2;	/* Degree of Taylor expansion */
-
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
 
@@ -90,7 +91,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 
     double omega;   /* Interpolated omega value at I */
 
-	if(I<2 || I>6)	/* Initial condition is outside known domain of SM */
+	if(I<1 || I>7)	/* Initial condition is outside known domain of SM */
 	{
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;
@@ -120,7 +121,8 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
   * parameter \f$a\f$.
   *
   * NOTE:
-  *		The degree of the Fourier-Taylor expansion used is \f$N=10, L=3\f$.
+  *		The degree of the Fourier-Taylor expansion used is \f$N, L\f$ (hardcoded
+  *		at the beginning of this file).
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
@@ -129,9 +131,6 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
 		double *Ip, double *phip, double a)
 {
-	const int N=2;	/* Degree of Fourier expansion */
-	const int M=2;	/* Degree of Taylor expansion */
-
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
 

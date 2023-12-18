@@ -10,7 +10,7 @@ set ylabel "L (degree of Taylor expansion)"
 set zlabel "error"
 
 set xtics 2			# increments of 2
-set ytics 0,1,4
+set ytics 0,1,6
 
 #set view 52,49,1,1
 set view 59,73,1,1

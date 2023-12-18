@@ -1,8 +1,8 @@
 progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
-		dLstar_dI Lstar omega \
-		SM_given_I FT FT_error_given_I FT_error \
+		dLstar_dI Lstar dL_dphip omega \
+		FT FT_error_given_I FT_error \
 		T T_error \
-		SM \
+		SM SM_given_I \
 		explore \
 		phase_port_SM \
 		IM \
@@ -12,17 +12,19 @@ objects = FT.o FT_module.o \
 		  FT_error.o \
 		  dLstar_dI.o \
 		  Lstar.o \
+		  dL_dphip.o \
 		  omega.o \
 		  T.o T_module.o \
 		  T_error.o \
 		  SM.o SM_module.o \
+		  SM_given_I.o \
 		  explore.o \
 		  phase_port_SM.o \
 		  IM.o IM_module.o \
 		  diffusion.o
 
-CFLAGS = -g
-LDFLAGS = -g
+CFLAGS = -g #-O3
+LDFLAGS = -g #-O3
 LDLIBS = -lm -lgsl -lgslcblas
 
 all: $(progs)
@@ -53,10 +55,9 @@ dLstar_dI: dLstar_dI.o FT_module.o
 
 Lstar: Lstar.o FT_module.o
 
-omega: omega.o FT_module.o
+dL_dphip: dL_dphip.o FT_module.o
 
-SM_given_I: SM_given_I.c
-	gcc -o SM_given_I SM_given_I.c -lgsl -lm
+omega: omega.o FT_module.o
 
 FT: FT.o FT_module.o 
 
@@ -70,6 +71,8 @@ T: T.o T_module.o
 T_error: T_error.o T_module.o FT_module.o
 
 SM: SM.o SM_module.o FT_module.o T_module.o
+
+SM_given_I: SM_given_I.o SM_module.o FT_module.o T_module.o
 
 explore: explore.o SM_module.o FT_module.o T_module.o
 

@@ -4,7 +4,7 @@
 set key top left
 set xlabel "Action level I"
 set ylabel "Fourier coefficient A_0"
-plot "A0_scaled.dat" w p pt 3 ps 3
+plot "A0.res" w p pt 3 ps 3
 
 set term pop
 set out

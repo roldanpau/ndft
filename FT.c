@@ -33,7 +33,7 @@ int
 main (int argc, char *argv[])
 {
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=5;		/* Number of tori used in numerical SM */
+	const int ntori=7;		/* Number of tori used in numerical SM */
 
 	/* Table containing for all tori, their Fourier coeffs */
 	double A_all[ntori][nfour];	
