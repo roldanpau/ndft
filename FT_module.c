@@ -18,6 +18,8 @@
 
 static const char A2_FILE[] = "A2.res";
 static const char B2_FILE[] = "B2.res";
+static const char A4_FILE[] = "A4.res";
+static const char B4_FILE[] = "B4.res";
 static const char ddA_FILE[] = "ddA.res";
 static const char ddB_FILE[] = "ddB.res";
 
@@ -72,6 +74,8 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 
 	write_Fourier_all_tori(ntori, nfour, A_all, 2, A2_FILE); 
 	write_Fourier_all_tori(ntori, nfour, B_all, 2, B2_FILE); 
+	write_Fourier_all_tori(ntori, nfour, A_all, 4, A4_FILE); 
+	write_Fourier_all_tori(ntori, nfour, B_all, 4, B4_FILE); 
 }
 
 /** 
