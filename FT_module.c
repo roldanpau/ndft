@@ -248,9 +248,11 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 	const double I1=2;
 	const double I2=3;
 	const double I3=4;
+	const double I4=5;
+	const double I5=6;
 
         /* Interpolate F. coef A_j at I */
-        assert(M<=4);
+        assert(M<=6);
         switch(M)
         {
             case 0:
@@ -270,6 +272,19 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
                 A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
                     ddA[j][3]*(I-I0)*(I-I1)*(I-I2) + 
                     ddA[j][4]*(I-I0)*(I-I1)*(I-I2)*(I-I3);
+                break;
+            case 5:
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
+                    ddA[j][3]*(I-I0)*(I-I1)*(I-I2) + 
+                    ddA[j][4]*(I-I0)*(I-I1)*(I-I2)*(I-I3) +
+                    ddA[j][5]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4);
+                break;
+            case 6:
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
+                    ddA[j][3]*(I-I0)*(I-I1)*(I-I2) + 
+                    ddA[j][4]*(I-I0)*(I-I1)*(I-I2)*(I-I3) +
+                    ddA[j][5]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4) +
+                    ddA[j][6]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5);
                 break;
             default:
                 break;
@@ -295,11 +310,13 @@ void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 	const double I1=2;
 	const double I2=3;
 	const double I3=4;
+	const double I4=5;
+	const double I5=6;
 
 	for(int j=0; j<=N; j++)
     {
         /* Interpolate F. coef A_j' at I */
-        assert(M<=4);
+        assert(M<=6);
         switch(M)
         {
             case 0:
@@ -320,6 +337,36 @@ void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
 					ddA[j][4]*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
 							(I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2));
+                break;
+            case 5:
+                Ap[j] =  ddA[j][1] + 
+                    ddA[j][2]*((I-I1)+(I-I0)) +
+					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+					ddA[j][4]*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+							(I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2)) +
+					ddA[j][5]*((I-I1)*(I-I2)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3));
+                break;
+            case 6:
+                Ap[j] =  ddA[j][1] + 
+                    ddA[j][2]*((I-I1)+(I-I0)) +
+					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+					ddA[j][4]*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+							(I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2)) +
+					ddA[j][5]*((I-I1)*(I-I2)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)) +
+					ddA[j][6]*((I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4)*(I-I5) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I5) +
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4));
                 break;
             default:
                 break;

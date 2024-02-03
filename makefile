@@ -1,6 +1,7 @@
-progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
+progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		dLstar_dI Lstar dL_dphip omega \
 		FT FT_error_given_I FT_error \
+		interp_coef interp_omega \
 		T T_error \
 		SM SM_given_I \
 		explore \
@@ -10,6 +11,7 @@ progs = lin_interp spline_interp fft interp_coef fdd Fourier_coefs_given_I \
 
 objects = FT.o FT_module.o \
 		  FT_error.o \
+		  interp_coef.o interp_omega.o \
 		  dLstar_dI.o \
 		  Lstar.o \
 		  dL_dphip.o \
@@ -42,9 +44,6 @@ spline_interp: spline_interp.c
 fft: fft.c
 	gcc -o fft fft.c -lgsl -lm
 
-interp_coef: interp_coef.c
-	gcc -o interp_coef interp_coef.c -lgsl
-
 fdd: fdd.c
 	gcc -o fdd fdd.c -lm
 
@@ -65,6 +64,10 @@ FT_error_given_I: FT_error_given_I.c
 	gcc -o FT_error_given_I -g FT_error_given_I.c -lgsl -lm
 
 FT_error: FT_error.o FT_module.o
+
+interp_coef: interp_coef.o FT_module.o
+
+interp_omega: interp_omega.o T_module.o
 
 T: T.o T_module.o 
 

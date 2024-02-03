@@ -11,8 +11,10 @@ do
 	./fft curve_${k}_interp >coeffs_${k}.res 2> fft_${k}.res
 done
 
+gnuplot curves.plt
 gnuplot decay_An.plt
 gnuplot decay_Bn.plt
 
+mv curves.tex paper/images/
 mv decay_An.eps paper/images/
 mv decay_Bn.eps paper/images/

@@ -1,7 +1,10 @@
 /** \file FT_error.c
   * \brief Find the error of the Fourier-Taylor approximation.
   *
-  * Find the error of the Fourier-Taylor approximation.
+  * Find the error of the Fourier-Taylor approximation over the domain \f$
+  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [1,4], while
+  * the global domain is chosen [1,7].
+  *
   * The error depends on the degree N of the Fourier expansion, and degree M of
   * the Taylor expansion. Thus for each pair (M,N) we compute the error, and
   * print it to stdout.
@@ -21,11 +24,19 @@
 #include <math.h>		// fabs
 #include "FT_module.h"
 
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
 int
 main (int argc, char *argv[])
 {
 	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
 	const int ntori=7;		/* Number of tori used in numerical SM */
+
+    /* For local SM, the max error is computed up to torus Imax only */
+    int Imax;               
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -33,7 +44,7 @@ main (int argc, char *argv[])
 	int I;
 	double phi; 
 	double Ip, phip;	/* Numerical values of I', phi' */
-	double Ip_approx; /* I' computed using FT approximate model */
+	double Ip_approx;   /* I' computed using FT approximate model */
 	double error; 
 	double max_error_tor;	/* max approx. error over all points on torus I */
 	double max_error;
@@ -45,24 +56,25 @@ main (int argc, char *argv[])
 	FILE *fp_rng;
 	double Iaux, t;
 
-	if(argc != 1)
+	if(argc != 2)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s Imax\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
+    Imax = atoi(argv[1]);
   
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,ddA,ddB);
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
-		for(int M=0; M<ntori; M++)	/* M = Degree of Taylor expansion */
+		for(int M=0; M<min(ntori, Imax); M++)	/* M = Degree of Taylor expansion */
 		{
 			double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 			double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
 
 			max_error = 0.0;
-			for(I=1; I<8; I++)
+			for(I=1; I<=Imax; I++)
 			{
 				/* Compute F. coefs A_n(I), B_n(I) for action value I */
 				coefs_eval(nfour,ntori,ddA,N,M,I,A);

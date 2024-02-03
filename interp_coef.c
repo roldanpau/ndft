@@ -1,67 +1,74 @@
+/** \file interp_coef.c
+  * \brief Find approximating polynomial to Fourier coefficients \f$A_n(I)\f$.
+  *
+  * Given the data \f$A_n(I=1), dotsc, A_n(I=7)\f$, find the best approximating
+  * polynomial \f$ P(I) \f$ of degree \f$M \leq 6 \f$ to those values.
+  * Given the desired degree \f$M\f$, interpolate the \f$ M+1 \f$ first points
+  * to obtain \f$ P(I) \f$. 
+  * Then evaluate interpolating polynomial \f$ P(I) \f$ at many points (for
+  * later plotting P) in the range \f$ I=1 \f$ to \f$ I=7 \f$. (Effectively
+  * extrapolating the polynomial to a larger range).
+  *
+  * NOTES: 
+  *
+  * USAGE:	
+  *		./interp_coef 1 four deg > interp_poly_A2
+  *		./interp_coef 0 four deg > interp_poly_B2
+  *
+  * CALLED BY:	
+  *
+  */
+
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_spline.h>
-
-typedef struct 
-{
-	double *d;
-	double *coef;
-	double *work;
-}
-polynomial_state_t;
+#include <math.h>		// fabs
+#include "FT_module.h"
 
 int
-main (void)
+main (int argc, char *argv[])
 {
-  int i;
-  const int n=7;
-  double xi, yi, x[n], y[n];
+	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=7;		/* Number of tori used in numerical SM */
 
-  /* auxiliary variables */
-  double *xp, *yp;
-  FILE *fp;
-  double dx;
+	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
+	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
-   /* Read input curve */
-    xp = x; yp = y;
-    fp = fopen("A2.res", "r");
-    while(fscanf(fp,"%le %le", xp, yp) != EOF) {
-        /* advance pointers */
-        xp ++; yp ++;
-    }
-    fclose(fp);
-  
-  {
-    gsl_interp_accel *acc
-      = gsl_interp_accel_alloc ();
-    gsl_spline *spline
-      = gsl_spline_alloc (gsl_interp_polynomial, n);
+	double I;
 
-    gsl_spline_init (spline, x, y, n);
+	if(argc != 4)
+	{
+		fprintf(stderr, "Num of args incorrect. Usage: %s isA four deg\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	/* isA = 1 means interpolate A_n, isA=0 means interpolate B_n */
+	int isA = atoi(argv[1]);	
+	int N = atoi(argv[2]);	/* N = Fourier coefficient */
+	int M = atoi(argv[3]);	/* M = Degree of Taylor expansion */
 
-	/* Obtain coefficients of interpolating polynomial P(x) */
-	const polynomial_state_t *state = (const polynomial_state_t *) (spline ->
-			interp -> state);
-	double d0, d1, d2, d3, d4;
-	d0 = state->d[0];
-	d1 = state->d[1];
-	d2 = state->d[2];
-	d3 = state->d[3];
-	d4 = state->d[4];
-	fprintf(stderr, "d0: %g, d1: %g, d2: %g, d3: %g, d4: %g\n", 
-			d0, d1, d2, d3, d4);
+    /* Read FT series (divided differences) from file */
+    read_FT(nfour,ntori,ddA,ddB);
 
-	/* Evaluate interp polynomial P(x) at many points (for plotting P) */
-	dx = (x[n-1] - x[0]) / 100;
-    for (xi = x[0]; xi < x[n-1]; xi += dx)
-      {
-        yi = gsl_spline_eval (spline, xi, acc);
-        printf ("%g %g\n", xi, yi);
-      }
-    gsl_spline_free (spline);
-    gsl_interp_accel_free (acc);
-  }
-  return 0;
+	if(isA)
+	{
+		double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
+
+		for(I=1; I<=7; I += 0.1)
+		{
+			/* Compute F. coef A_n(I) for action value I */
+			coefs_eval(nfour,ntori,ddA,N,M,I,A);
+			printf("%g %g\n", I, A[N]);
+		}
+	}
+	else // isB
+	{
+		double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
+
+		for(I=1; I<=7; I += 0.1)
+		{
+			/* Compute F. coef B_n(I) for action value I */
+			coefs_eval(nfour,ntori,ddB,N,M,I,B);
+			printf("%g %g\n", I, B[N]);
+		}
+	}
+	return 0;
 }

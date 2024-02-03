@@ -8,7 +8,7 @@
   *		No need to specify the number of points in datafile (the prog figures
   *		it out).
   *		
-  * USAGE:	./lin_interp curve > curve_interp
+  * USAGE:	./spline_interp curve > curve_interp
   *
   * CALLED BY:	fft.sh
   */

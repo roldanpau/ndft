@@ -2,10 +2,11 @@
 #set term post eps color
 
 set key top left
-set xlabel "Action level I"
-set ylabel "Fourier coefficient B_4"
-plot "B4_scaled.dat" w p pt 3 ps 3, \
-"interp_poly_B4" w l t "polynomial interpolation"
+set xlabel "I"
+set ylabel "B_4"
+plot "B4.res" w p pt 3 ps 3, \
+"interp_poly_B4_M2" w l t "polynomial extrapolation of deg 2", \
+"interp_poly_B4_M3" w l t "polynomial extrapolation of deg 3"
 
 set term pop
 set out

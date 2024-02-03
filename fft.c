@@ -65,7 +65,7 @@ main (int argc, char *argv[])
 	    fprintf (stdout, "%e\n", y[i]);
     } */
 
- for (i = 0; i < n/2; i++)
+ for (i = 0; i <= n/2; i++)
     {
 		double re;
 		double im;
