@@ -2,8 +2,8 @@
   * \brief Find the error of the Fourier-Taylor approximation.
   *
   * Find the error of the Fourier-Taylor approximation over the domain \f$
-  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [1,4], while
-  * the global domain is chosen [1,7].
+  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [0,4], while
+  * the global domain is chosen [0,7].
   *
   * The error depends on the degree N of the Fourier expansion, and degree M of
   * the Taylor expansion. Thus for each pair (M,N) we compute the error, and
@@ -13,7 +13,7 @@
   *		For the moment, we measure only the error in the I component, not in
   *		\phi.
   *
-  * USAGE:	./FT_error > FT_error.res
+  * USAGE:	./FT_error Imax > FT_error.res
   *
   * CALLED BY:	
   *
@@ -32,8 +32,8 @@
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
     /* For local SM, the max error is computed up to torus Imax only */
     int Imax;               
@@ -68,12 +68,13 @@ main (int argc, char *argv[])
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
-		for(int M=0; M<min(ntori, Imax); M++)	/* M = Degree of Taylor expansion */
+		for(int M=0; M<min(ntori, Imax+1); M++)	/* M = Degree of Taylor expansion */
 		{
 			double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 			double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
 
 			max_error = 0.0;
+			/* We skip torus I=0, since error is 0 for that one */
 			for(I=1; I<=Imax; I++)
 			{
 				/* Compute F. coefs A_n(I), B_n(I) for action value I */

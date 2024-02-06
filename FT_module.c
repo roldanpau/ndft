@@ -34,6 +34,9 @@ void write_Fourier_all_tori(size_t ntori, size_t nfour,
  * coefficients should be zero. Thus we decide to zero all odd coefficients to
  * impose that the Fourier series preserves the symmetry.
  *
+ * Fourier coefficients \f$ A_n(0), B_n(0) \f$ are zero, so we set them
+ * separately.
+ *
  * @param[in]   ntori	Number of tori
  * @param[in]   nfour	Number of Fourier coefficients computed by FFT
  * @param[out]  A_all	Table containing for each torus I, its Fourier coefs.
@@ -49,10 +52,17 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 	double *Ap, *Bp;
 	FILE *fp;
 	int coeff_num;
+	int i,j;
 
-	for(int i=0; i<ntori; i++)
+	/* Fourier coefficients \f$ A_n(0), B_n(0) \f$ of first torus are known to
+	 * be zero, so we set them separately. */
+	for(j=0; j<nfour; j++)
+		A_all[0][j] = 0;
+
+	/* Read Fourier coeffs of all other tori from file */
+	for(int i=1; i<ntori; i++)
 	{
-		sprintf(filename, "coeffs_%d.res", i+2);
+		sprintf(filename, "coeffs_%d.res", i+1);
 		Ap = A_all[i];
 		Bp = B_all[i];
 
@@ -79,7 +89,7 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 }
 
 /** 
- * \brief Write Fourier coefficient `n' of each tori (torus=1,2,...,7).
+ * \brief Write Fourier coefficient `n' of each tori (torus=0,1,2,...,7).
  *
  * The file generated (e.g. A0.res) is used for inspection and plotted in
  * interp_poly_A2.plt.
@@ -109,7 +119,7 @@ void write_Fourier_all_tori(size_t ntori, size_t nfour,
 	/* Write coefs */
 	for(int i=0; i<n; i++)
 	{
-		x[i] = i+1;			/* I */
+		x[i] = i;			/* I */
 		y[i] = coefs_all[i][j];	/* A_j(I) or B_j(I) */
 		fprintf(fp, "%f %f\n", x[i], y[i]);
 	}
@@ -147,7 +157,7 @@ void compute_FT(size_t ntori, size_t nfour, double coefs_all[ntori][nfour],
 		/* input curve */
 		for(int i=0; i<n; i++)
         {
-            x[i] = i+1;			/* I */
+            x[i] = i;			/* I */
             y[i] = coefs_all[i][j];	/* A_j(I) or B_j(I) */
         }
       
@@ -186,13 +196,15 @@ void write_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
     FILE *fpB = fopen(ddB_FILE, "w");
     for(int i=0; i<nfour; i++)
     {
-        for(int j=0; j<ntori; j++)
+        for(int j=0; j<ntori-1; j++)
         {
             fprintf(fpA, "%lf ", ddA[i][j]);
             fprintf(fpB, "%lf ", ddB[i][j]);
         }
-        fprintf(fpA, "\n");
-        fprintf(fpB, "\n");
+		// Last divided difference, j == ntori-1, is treated differently, since
+		// we don't want to add a space character after it.
+        fprintf(fpA, "%lf\n", ddA[i][ntori-1]);
+        fprintf(fpB, "%lf\n", ddB[i][ntori-1]);
     }
     fclose(fpA);
     fclose(fpB);
@@ -216,13 +228,15 @@ void read_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
 	int nIt;	// Number of read items
     for(int i=0; i<nfour; i++)
     {
-        for(int j=0; j<ntori; j++)
+        for(int j=0; j<ntori-1; j++)
         {
             nIt = fscanf(fpA, "%lf ", &(ddA[i][j]));
             nIt = fscanf(fpB, "%lf ", &(ddB[i][j]));
         }
-        nIt = fscanf(fpA, "\n");
-        nIt = fscanf(fpB, "\n");
+		// Last divided difference, j == ntori-1, is treated differently, since
+		// we don't want to add a space character after it.
+        nIt = fscanf(fpA, "%lf\n", &(ddA[i][ntori-1]));
+        nIt = fscanf(fpB, "%lf\n", &(ddB[i][ntori-1]));
     }
     fclose(fpA);
     fclose(fpB);
@@ -244,15 +258,16 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 {
 	for(int j=0; j<=N; j++)
     {
-	const double I0=1;
-	const double I1=2;
-	const double I2=3;
-	const double I3=4;
-	const double I4=5;
-	const double I5=6;
+	const double I0=0;
+	const double I1=1;
+	const double I2=2;
+	const double I3=3;
+	const double I4=4;
+	const double I5=5;
+	const double I6=6;
 
         /* Interpolate F. coef A_j at I */
-        assert(M<=6);
+        assert(M<=7);
         switch(M)
         {
             case 0:
@@ -286,6 +301,14 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
                     ddA[j][5]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4) +
                     ddA[j][6]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5);
                 break;
+            case 7:
+                A[j] = ddA[j][0] + ddA[j][1]*(I-I0) + ddA[j][2]*(I-I0)*(I-I1) +
+                    ddA[j][3]*(I-I0)*(I-I1)*(I-I2) + 
+                    ddA[j][4]*(I-I0)*(I-I1)*(I-I2)*(I-I3) +
+                    ddA[j][5]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4) +
+                    ddA[j][6]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5) +
+                    ddA[j][7]*(I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5)*(I-I6);
+                break;
             default:
                 break;
         }
@@ -306,17 +329,18 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 		size_t M, double I, double Ap[N+1]) 
 {
-	const double I0=1;
-	const double I1=2;
-	const double I2=3;
-	const double I3=4;
-	const double I4=5;
-	const double I5=6;
+	const double I0=0;
+	const double I1=1;
+	const double I2=2;
+	const double I3=3;
+	const double I4=4;
+	const double I5=5;
+	const double I6=6;
 
 	for(int j=0; j<=N; j++)
     {
         /* Interpolate F. coef A_j' at I */
-        assert(M<=6);
+        assert(M<=7);
         switch(M)
         {
             case 0:
@@ -367,6 +391,31 @@ void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
                             (I-I0)*(I-I1)*(I-I2)*(I-I4)*(I-I5) + 
                             (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I5) +
                             (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4));
+                break;
+            case 7:
+                Ap[j] =  ddA[j][1] + 
+                    ddA[j][2]*((I-I1)+(I-I0)) +
+					ddA[j][3]*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+					ddA[j][4]*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+							(I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2)) +
+					ddA[j][5]*((I-I1)*(I-I2)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)) +
+					ddA[j][6]*((I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4)*(I-I5) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4)*(I-I5) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I5) +
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)) +
+					ddA[j][7]*((I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5)*(I-I6) + 
+                            (I-I0)*(I-I2)*(I-I3)*(I-I4)*(I-I5)*(I-I6) +
+							(I-I0)*(I-I1)*(I-I3)*(I-I4)*(I-I5)*(I-I6) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I4)*(I-I5)*(I-I6) + 
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I5)*(I-I6) +
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I6) +
+                            (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5));
                 break;
             default:
                 break;
