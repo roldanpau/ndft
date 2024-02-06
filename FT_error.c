@@ -11,7 +11,7 @@
   *
   * NOTES: 
   *		For the moment, we measure only the error in the I component, not in
-  *		\phi.
+  *		\f$ \phi \f$.
   *
   * USAGE:	./FT_error Imax > FT_error.res
   *

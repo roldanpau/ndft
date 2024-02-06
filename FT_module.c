@@ -324,7 +324,7 @@ void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
  * @param[in]   N   Degree of the Fourier series.
  * @param[in]   M   Degree of the Taylor series.
  * @param[in]   I   Action at which we want to evaluate.
- * @param[out]  A   Fourier coefs A_j(I) (or B_j(I)).
+ * @param[out]  Ap   Derivative of Fourier coefs A_j(I) (or B_j(I)).
  */
 void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 		size_t M, double I, double Ap[N+1]) 
