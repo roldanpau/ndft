@@ -4,7 +4,7 @@
   * Let an action \f$ I \f$ be fixed. Read a set of points mapped by the
   * transition map: \f$ (I,\phi) \to (I', \phi') \f$. For each point, find the
   * shift of the transition map,
-  * \f\[ \omega(I) = \phi-\phi'-d{Lstar}/d{I}. \f\]
+  * \f\[ \omega(I) = \phi-\phi'-d{\widetilde{L}}/d{I}. \f\]
   * Finally, average \f$ \omega(I) \f$ over all angles, and print result to
   * stdout.
   *
@@ -28,14 +28,14 @@ const int NPOINTS = 100;
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
-	const int N=10;	/* Degree of Fourier expansion */
-	const int M=4;	/* Degree of Taylor expansion */
+	const int N=4;	/* Degree of Fourier expansion */
+	const int M=6;	/* Degree of Taylor expansion */
 
 	double Ap[N+1];	/* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double Bp[N+1];	/* Derivative of Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */

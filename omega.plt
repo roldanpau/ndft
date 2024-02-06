@@ -1,8 +1,11 @@
-set out "omega.eps"
-set term post eps color
+set term tikz
+set out "omega.tex"
 
-plot "omega.res" u 2:3 t "omega(I=2)", \
-2.072696 with lines t "average omega"
+set xlabel '$\phi^\prime$'
+set ylabel '$\omega$'
 
-set term pop
-set out
+plot "omega.res" u 2:3 t '$\omega(2, \phi^\prime)$', \
+2.072993 with lines t '$\overline{\omega}(2)$'
+
+unset out
+unset term
