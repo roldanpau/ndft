@@ -7,4 +7,4 @@
 ./omega 7.0 > omega.res 2>> omega_all.res
 
 gnuplot omega_all.plt
-mv omega_all.eps paper/images
+mv omega_all.tex paper/images

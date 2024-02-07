@@ -23,8 +23,6 @@
 
 #include "FT_module.h"
 
-const int NPOINTS = 100;
-
 int
 main (int argc, char *argv[])
 {

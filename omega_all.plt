@@ -1,10 +1,10 @@
-set out "omega_all.eps"
-set term post eps color
+set term tikz
+set out "omega_all.tex"
 
-set xlabel "I"
-set ylabel "omega(I)"
+set xlabel '$I$'
+set ylabel '$\omega(I)$'
+
 plot "omega_all.res" w lp not
 
-set term pop
-set out
-
+unset out
+unset term
