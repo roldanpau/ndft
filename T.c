@@ -34,7 +34,7 @@ main (int argc, char *argv[])
 	/* Table containing for all tori, their omega values */
 	double omega_all[ntori];	
 
-	const int M=2;	/* Degree of Taylor expansion */
+	const int M=6;	/* Degree of Taylor expansion */
 
 	double omega;	/* Interpolated omega value at I */
 
