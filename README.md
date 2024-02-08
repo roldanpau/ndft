@@ -16,8 +16,10 @@ evaluated at any desired point $(I,\phi)$.
 ### Dependencies
 
 * You will most likely need a linux OS with the usual C/C++ developing
-environment (compiler, libraries). Moreover, you will need to install the GNU
-Scientific Library (GSL).
+environment (compiler, libraries). 
+* You will need GNU Awk (not just the Ubuntu default mawk) for some of the BASH
+  scripts to work (e.g. for fft.sh).
+* Moreover, you will need to install the GNU Scientific Library (GSL).
 
 ### Installing
 
