@@ -71,7 +71,7 @@ interp_omega: interp_omega.o T_module.o
 
 T: T.o T_module.o 
 
-T_error: T_error.o T_module.o FT_module.o
+T_error: T_error.o T_module.o FT_module.o SM_module.o
 
 SM: SM.o SM_module.o FT_module.o T_module.o
 

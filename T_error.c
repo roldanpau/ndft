@@ -24,6 +24,7 @@
 #include <math.h>		// fabs
 #include "FT_module.h"
 #include "T_module.h"
+#include "SM_module.h"
 
 #define min(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -39,14 +40,21 @@ main (int argc, char *argv[])
     /* For local SM, the max error is computed up to torus Imax only */
     int Imax;               
 
-	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
-	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
-	double dd[ntori-1];	        /* divided differences of omega(I) */
+    /* divided differences of Fourier coeffs A_n(I) */
+	double ddA[nfour][ntori];	
 
-	int I;
-	double phi; 
-	double Ip, phip;	/* Numerical values of I', phi' */
-	double phip_approx; /* phi' computed using FT approximate model */
+    /* divided differences of Fourier coeffs B_n(I) */
+	double ddB[nfour][ntori];	
+	double ddOmega[ntori-1];	        /* divided differences of omega(I) */
+
+    double I, phi;      /* (I, \phi) = Point in the domain of the SM */
+
+    /* (I', \phi') = Image of (I, phi) by the NUMERICAL SM */
+    double Ip, phip;    
+
+    /* (\tilde I', \tilde \phi') = Image of (I, phi) by the SM SERIES */
+    double tIp, tphip;
+
 	double error; 
 	double max_error_tor;	/* max approx. error over all points on torus I */
 	double max_error;
@@ -56,7 +64,7 @@ main (int argc, char *argv[])
 	char filename_rng[100];
 	FILE *fp_dom;
 	FILE *fp_rng;
-	double Iaux, t;
+	double Itor, t;
 
 	if(argc != 2)
 	{
@@ -69,28 +77,21 @@ main (int argc, char *argv[])
     read_FT(nfour,ntori,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,dd);
+    read_T(ntori-1,ddOmega);
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
-        for(int M=0; M<min(ntori-1, Imax); M++)	/* M = Degree of Taylor expansion */
+        /* M = Degree of Taylor expansion */
+        for(int M=0; M<min(ntori-1, Imax); M++)	
         {
-			double Ap[N+1];	/* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
-			double Bp[N+1];	/* Derivative of Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
-            double omega;	/* omega(I) */
-
             max_error = 0.0;
 			/* We skip torus I=0, since error is 0 for that one */
-            for(I=1; I<=Imax; I++)
+            for(Itor=1; Itor<=Imax; Itor++)
             {
-                dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);  /* Compute F. coefs A_n'(I) for action value I */
-                dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);  /* Compute F. coefs B_n'(I) for action value I */
-
-                /* Compute omega(I) for action value I */
-                omega_eval(ntori-1,dd,M,I,&omega);
-
-                sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-                sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+                sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)Itor+1,
+                        (int)Itor+1);
+                sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)Itor+1,
+                        (int)Itor+1);
 
                 fp_dom = fopen(filename_dom, "r");
                 fp_rng = fopen(filename_rng, "r");
@@ -100,19 +101,21 @@ main (int argc, char *argv[])
                 /* For each numerical value of the transition map (I,\phi) ->
                  * (I',\phi'), 
                  */
-                while((fscanf(fp_dom,"%le %le %le", &Iaux, &phi, &t) != EOF) && 
+                /* (1) Read I,\phi,I',\phi'. */
+                while((fscanf(fp_dom,"%le %le %le", &I, &phi, &t) != EOF) && 
                         (fscanf(fp_rng,"%le %le %le", &Ip, &phip, &t) != EOF))	
                 {
                     /* Scale I (I's are not scaled in curve1_%d_%d_dom_0.res) */
-                    Iaux = Iaux*1000;
+                    I = I*1000;
                     Ip = Ip*1000;
                 
-                    /* (1) Read I,\phi,I',\phi'. */
                     /* (2) Compute approximate SM using FT model. */
-                    phip_approx = phi - omega - dL_dI(N, Ap, Bp, phip);
+                    SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &tIp,
+                            &tphip);
 
-                    /* (3) Find max approximation error over all points on torus I */
-					error = constrainAngle(phip_approx - phip);
+                    /* (3) Find max approximation error over all points on
+                     * torus I */
+					error = constrainAngle(tphip - phip);
 					error = (error<M_PI ? error : 2*M_PI - error);
                     if(error>max_error_tor) max_error_tor = error;
                     /*
@@ -124,7 +127,7 @@ main (int argc, char *argv[])
                 }
                 fclose(fp_dom);
                 fclose(fp_rng);
-                fprintf(stderr, "Max error for torus %d is: %f\n", (int)I, max_error_tor);
+                fprintf(stderr, "Max error for torus %d is: %f\n", (int)Itor, max_error_tor);
                 if(max_error_tor>max_error) max_error = max_error_tor;
             }
             printf("%d %d %f\n", N, M, max_error);

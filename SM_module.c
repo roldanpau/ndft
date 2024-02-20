@@ -13,10 +13,6 @@
 #include "FT_module.h"
 #include "T_module.h"
 
-const int N=2;	/* Degree of Fourier expansion */
-const int M=6;	/* Degree of Taylor expansion */
-
-
 /** \brief Iteratively find \f$ \phi' = F(\phi'; I, \phi) \f$.
  *
  *  Variable \f$ \phi' \f$ is defined implicitly by equation
@@ -79,8 +75,8 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   *		returns \f$ (I, \phi) \f$ as the final condition.
   */
 void SM(int nfour, int ntori, double ddA[nfour][ntori], 
-        double ddB[nfour][ntori], double ddOmega[ntori-1], double I, double
-        phi, double *Ip, double *phip)
+        double ddB[nfour][ntori], double ddOmega[ntori-1], int N, int M, double
+        I, double phi, double *Ip, double *phip)
 {
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
@@ -128,8 +124,8 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
   */
 void damped_SM(int nfour, int ntori, double ddA[nfour][ntori], 
-		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
-		double *Ip, double *phip, double a)
+        double ddB[nfour][ntori], double ddOmega[ntori], int N, int M, double
+        I, double phi, double *Ip, double *phip, double a)
 {
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */

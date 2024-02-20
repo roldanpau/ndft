@@ -1,8 +1,7 @@
 /** \file SM_given_I.c
   * \brief Given I, find the image under the scattering map of the torus T(I).
   *
-  *	The degree (N,M) of the Fourier-Taylor series can be modified in file
-  *	SM_module.c
+  *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
   *
   * NOTES: 
   *		Fourier-Taylor coeffs for the generating function are read from files
@@ -36,6 +35,9 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
+    const int N = 2;    /* Degree of Fourier series */
+    const int M = 2;    /* Degree of Taylor series */
+
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
@@ -60,7 +62,7 @@ main (int argc, char *argv[])
 		phi = i*dphi;
 
 		/* Compute the SM: (I, phi) -> (Ip, phip) */
-		SM(nfour, ntori, ddA, ddB, ddOmega, I, phi, &Ip, &phip);
+		SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip);
 
 		printf("%f %f\n", phip, Ip);
 	}

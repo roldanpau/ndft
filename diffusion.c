@@ -33,6 +33,9 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori];      /* divided differences of omega(I) */
 
+    const int N = 2;    /* Degree of Fourier series */
+    const int M = 2;    /* Degree of Taylor series */
+
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
@@ -73,7 +76,7 @@ main (int argc, char *argv[])
         //while(!(fabs(phi-0) < tol || fabs(phi-M_PI) < tol))
         //{
             /* Compute the SM: (I, phi) -> (Ip, phip) */
-            SM(nfour, ntori, ddA, ddB, ddOmega, I, phi, &Ip, &phip);
+            SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip);
             I = Ip;
             phi = (phip>M_PI ? phip-M_PI : phip);
             

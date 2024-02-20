@@ -26,12 +26,15 @@
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
-    double ddOmega[ntori];      /* divided differences of omega(I) */
+    double ddOmega[ntori-1];      /* divided differences of omega(I) */
+
+    const int N = 2;    /* Degree of Fourier series */
+    const int M = 2;    /* Degree of Taylor series */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
@@ -50,10 +53,10 @@ main (int argc, char *argv[])
     read_FT(nfour,ntori,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori,ddOmega);
+    read_T(ntori-1,ddOmega);
 
 	/* Compute the SM: (I, phi) -> (Ip, phip) */
-	SM(nfour, ntori, ddA, ddB, ddOmega, I, phi, &Ip, &phip);
+	SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip);
 	
     printf("%f %f\n", Ip, phip);
     return 0;
