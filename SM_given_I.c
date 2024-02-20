@@ -1,7 +1,8 @@
 /** \file SM_given_I.c
   * \brief Given I, find the image under the scattering map of the torus T(I).
   *
-  *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
+  *	The degree (N,M) of the Fourier-Taylor series can be modified in file
+  *	SM_module.c
   *
   * NOTES: 
   *		Fourier-Taylor coeffs for the generating function are read from files
@@ -12,7 +13,7 @@
   *
   * USAGE:	./SM_given_I 2 > SM_I_2.dat
   *
-  * CALLED BY:	
+  * CALLED BY: check_FourierTaylor.sh	
   *
   */
 
@@ -28,12 +29,12 @@ static const int NPOINTS = 100;
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
-    double ddOmega[ntori];      /* divided differences of omega(I) */
+    double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
@@ -51,7 +52,7 @@ main (int argc, char *argv[])
     read_FT(nfour,ntori,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori,ddOmega);
+    read_T(ntori-1,ddOmega);
 
 	double dphi = 2*M_PI/(NPOINTS-1);
 	for(int i=0; i<NPOINTS; i++)

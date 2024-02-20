@@ -3,7 +3,7 @@
   *
   *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
   *
-  * CALLED BY: SM	
+  * CALLED BY: SM, SM_given_I
   *
   */
 
@@ -79,8 +79,8 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   *		returns \f$ (I, \phi) \f$ as the final condition.
   */
 void SM(int nfour, int ntori, double ddA[nfour][ntori], 
-		double ddB[nfour][ntori], double ddOmega[ntori], double I, double phi, 
-		double *Ip, double *phip)
+        double ddB[nfour][ntori], double ddOmega[ntori-1], double I, double
+        phi, double *Ip, double *phip)
 {
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
@@ -91,7 +91,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 
     double omega;   /* Interpolated omega value at I */
 
-	if(I<1 || I>7)	/* Initial condition is outside known domain of SM */
+	if(I<=0 || I>7)	/* Initial condition is outside known domain of SM */
 	{
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;
@@ -108,7 +108,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
 
     /* Compute omega(I) for action value I */
-    omega_eval(ntori,ddOmega,M,I,&omega);
+    omega_eval(ntori-1,ddOmega,M,I,&omega);
 
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
     *phip = iteration(N, Ap, Bp, omega, phi);
