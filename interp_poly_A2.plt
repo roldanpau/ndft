@@ -1,12 +1,13 @@
-#set out "interp_poly_A2.eps"
-#set term post eps color
+set term tikz
+set out "interp_poly_A2.tex"
+
+set xlabel '$I$'
+set ylabel '$A_2$'
 
 set key top left
-set xlabel "I"
-set ylabel "A_2"
-plot "A2.res" w p pt 3 ps 3, \
-"interp_poly_A2_M2" w l t "polynomial extrapolation of deg 2", \
-"interp_poly_A2_M3" w l t "polynomial extrapolation of deg 3"
+plot "A2.res" w p pt 3 ps 3 not, \
+"interp_poly_A2_M4" w l t "polynomial extrapolation of deg 4", \
+"interp_poly_A2_M5" w l t "polynomial extrapolation of deg 5"
 
-set term pop
-set out
+unset out
+unset term

@@ -2,7 +2,7 @@
   * \brief Find the error of the Fourier-Taylor approximation.
   *
   * Find the error of the Fourier-Taylor approximation over the domain \f$
-  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [0,4], while
+  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [0,3], while
   * the global domain is chosen [0,7].
   *
   * The error depends on the degree N of the Fourier expansion, and degree M of
@@ -10,8 +10,8 @@
   * print it to stdout.
   *
   * NOTES: 
-  *		For the moment, we measure only the error in the I component, not in
-  *		\f$ \phi \f$.
+  *		We measure only the error in the I component, not in
+  *		\f$ \phi \f$. The error in \f$ \phi \f$ is measured in T_error.c
   *
   * USAGE:	./FT_error Imax > FT_error.res
   *

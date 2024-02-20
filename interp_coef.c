@@ -1,12 +1,12 @@
 /** \file interp_coef.c
   * \brief Find approximating polynomial to Fourier coefficients \f$A_n(I)\f$.
   *
-  * Given the data \f$A_n(I=1), dotsc, A_n(I=7)\f$, find the best approximating
-  * polynomial \f$ P(I) \f$ of degree \f$M \leq 6 \f$ to those values.
+  * Given the data \f$A_n(I=0), dotsc, A_n(I=7)\f$, find the best approximating
+  * polynomial \f$ P(I) \f$ of degree \f$M \leq 7 \f$ to those values.
   * Given the desired degree \f$M\f$, interpolate the \f$ M+1 \f$ first points
   * to obtain \f$ P(I) \f$. 
   * Then evaluate interpolating polynomial \f$ P(I) \f$ at many points (for
-  * later plotting P) in the range \f$ I=1 \f$ to \f$ I=7 \f$. (Effectively
+  * later plotting P) in the range \f$ I=0 \f$ to \f$ I=7 \f$. (Effectively
   * extrapolating the polynomial to a larger range).
   *
   * NOTES: 
@@ -27,8 +27,8 @@
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -52,7 +52,7 @@ main (int argc, char *argv[])
 	{
 		double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 
-		for(I=1; I<=7; I += 0.1)
+		for(I=0; I<=7; I += 0.1)
 		{
 			/* Compute F. coef A_n(I) for action value I */
 			coefs_eval(nfour,ntori,ddA,N,M,I,A);
@@ -63,7 +63,7 @@ main (int argc, char *argv[])
 	{
 		double B[N+1];	/* Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
 
-		for(I=1; I<=7; I += 0.1)
+		for(I=0; I<=7; I += 0.1)
 		{
 			/* Compute F. coef B_n(I) for action value I */
 			coefs_eval(nfour,ntori,ddB,N,M,I,B);

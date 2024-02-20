@@ -13,7 +13,7 @@
   *
   * USAGE:	./omega 2 > omega.res
   *
-  * CALLED BY:	
+  * CALLED BY: omega_all.sh	
   *
   */
 

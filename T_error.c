@@ -1,14 +1,19 @@
 /** \file T_error.c
   * \brief Find the error of the Taylor approximation.
   *
-  * Find the error of the Taylor approximation.
-  * The error depends on the degree M of the Taylor expansion. Thus for each
-  * value of M we compute the error, and print it to stdout.
+  * Find the error of the Taylor approximation over the domain \f$
+  * I\in[I_\min, I_\max] \f$. The local domain is chosen to be [0,3], while
+  * the global domain is chosen [0,7].
+  *
+  * The error depends on the degree N of the Fourier expansion, and degree M of
+  * the Taylor expansion. Thus for each pair (M,N) we compute the error, and
+  * print it to stdout.
   *
   * NOTES: 
-  *		We measure only the error in the phi component, not in I.
+  *		We measure only the error in the \f$ \phi \f$ component, not in
+  *		I. The error in \f$ I \f$ is measured in FT_error.c
   *
-  * USAGE:	./T_error > T_error.res
+  * USAGE:	./T_error Imax > T_error.res
   *
   * CALLED BY:	
   *
@@ -20,15 +25,23 @@
 #include "FT_module.h"
 #include "T_module.h"
 
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=7;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
+
+    /* For local SM, the max error is computed up to torus Imax only */
+    int Imax;               
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
-	double dd[ntori];	        /* divided differences of omega(I) */
+	double dd[ntori-1];	        /* divided differences of omega(I) */
 
 	int I;
 	double phi; 
@@ -45,34 +58,36 @@ main (int argc, char *argv[])
 	FILE *fp_rng;
 	double Iaux, t;
 
-	if(argc != 1)
+	if(argc != 2)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s Imax\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-
+    Imax = atoi(argv[1]);
+  
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori,dd);
+    read_T(ntori-1,dd);
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
-        for(int M=0; M<ntori; M++)	/* M = Degree of Taylor expansion */
+        for(int M=0; M<min(ntori-1, Imax); M++)	/* M = Degree of Taylor expansion */
         {
 			double Ap[N+1];	/* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 			double Bp[N+1];	/* Derivative of Fourier coefficients B_0(I), B_1(I), ..., B_N(I) */
             double omega;	/* omega(I) */
 
             max_error = 0.0;
-            for(I=1; I<8; I++)
+			/* We skip torus I=0, since error is 0 for that one */
+            for(I=1; I<=Imax; I++)
             {
-                dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);  /* Compute F. coefs A_n(I) for action value I */
-                dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);  /* Compute F. coefs B_n(I) for action value I */
+                dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);  /* Compute F. coefs A_n'(I) for action value I */
+                dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);  /* Compute F. coefs B_n'(I) for action value I */
 
                 /* Compute omega(I) for action value I */
-                omega_eval(ntori,dd,M,I,&omega);
+                omega_eval(ntori-1,dd,M,I,&omega);
 
                 sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
                 sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
@@ -88,7 +103,7 @@ main (int argc, char *argv[])
                 while((fscanf(fp_dom,"%le %le %le", &Iaux, &phi, &t) != EOF) && 
                         (fscanf(fp_rng,"%le %le %le", &Ip, &phip, &t) != EOF))	
                 {
-                    /* Scale I (I's are not scaled in win_%d_%d_dom_0.res) */
+                    /* Scale I (I's are not scaled in curve1_%d_%d_dom_0.res) */
                     Iaux = Iaux*1000;
                     Ip = Ip*1000;
                 
@@ -109,7 +124,7 @@ main (int argc, char *argv[])
                 }
                 fclose(fp_dom);
                 fclose(fp_rng);
-                //printf("Max error for torus %d is: %f\n", (int)I, max_error_tor);
+                fprintf(stderr, "Max error for torus %d is: %f\n", (int)I, max_error_tor);
                 if(max_error_tor>max_error) max_error = max_error_tor;
             }
             printf("%d %d %f\n", N, M, max_error);
