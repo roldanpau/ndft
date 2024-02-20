@@ -1,3 +1,5 @@
+PAPERDIR=~/mat-nuvol/research/ndft-paper
+
 make
 
 for i in {1..7}
@@ -8,3 +10,4 @@ do
 done
 
 gnuplot check_FourierTaylor.plt
+mv check_FourierTaylor.tex $PAPERDIR/images

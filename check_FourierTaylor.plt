@@ -1,5 +1,5 @@
-set out "check_FourierTaylor.eps"
-set term post eps color
+set term tikz
+set out "check_FourierTaylor.tex"
 
 plot \
 "curve_2_interp" w p pt 1 lc 1 t "data", \
@@ -17,5 +17,5 @@ plot \
 "SM_I_6.dat" with lines lt 1 not, \
 "SM_I_7.dat" with lines lt 1 not
 
-set term pop
-set out
+unset out
+unset term
