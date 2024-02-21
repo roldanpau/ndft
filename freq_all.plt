@@ -1,10 +1,11 @@
-set out "freq_all.eps"
-set term post eps color
+set term tikz
+set out "freq_all.tex"
+
+set xlabel '$I$'
+set ylabel '$\nu$'
 
 pi=3.14159265358979323844
-set xlabel "I"
-set ylabel "nu"
 plot 'freq_all.res' u ($1):(2*pi*$4/$3) w lp not
 
-set term pop
-set out
+unset out
+unset term
