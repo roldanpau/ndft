@@ -1,5 +1,8 @@
 # NOTES: Be sure to call FT before this script, to make sure that coefs ddA/ddB
 # have already been computed, and file A2.res has been written.
+
+PAPERDIR=~/mat-nuvol/research/ndft-paper
+
 make
 ./FT 2 0
 
@@ -25,5 +28,5 @@ make
 
 gnuplot interp_poly_A2.plt
 gnuplot interp_poly_B2.plt
-mv interp_poly_A2.tex paper/images
-mv interp_poly_B2.tex paper/images
+mv interp_poly_A2.tex $PAPERDIR/images
+mv interp_poly_B2.tex $PAPERDIR/images
