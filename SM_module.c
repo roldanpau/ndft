@@ -124,7 +124,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
   */
 void damped_SM(int nfour, int ntori, double ddA[nfour][ntori], 
-        double ddB[nfour][ntori], double ddOmega[ntori], int N, int M, double
+        double ddB[nfour][ntori], double ddOmega[ntori-1], int N, int M, double
         I, double phi, double *Ip, double *phip, double a)
 {
 	double A[N+1];	/* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
@@ -136,6 +136,14 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 
     double omega;   /* Interpolated omega value at I */
 
+	if(I<=0 || I>7)	/* Initial condition is outside known domain of SM */
+	{
+		fprintf(stderr, "I.C. outside known domain of SM\n");
+		*Ip = I;
+		*phip = phi;
+		return;
+	}
+
     /* Compute Fourier coefs A_n(I), B_n(I) for action value I */
     coefs_eval(nfour,ntori,ddA,N,M,I,A);
     coefs_eval(nfour,ntori,ddB,N,M,I,B);
@@ -145,7 +153,7 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
 
     /* Compute omega(I) for action value I */
-    omega_eval(ntori,ddOmega,M,I,&omega);
+    omega_eval(ntori-1,ddOmega,M,I,&omega);
 
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
     *phip = damped_iteration(N, Ap, Bp, omega, phi, a);
