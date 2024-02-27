@@ -1,5 +1,8 @@
-set out "dL_dphip.eps"
-set term post eps color
+set term tikz
+set out "dL_dphip.tex"
+
+set xlabel '$\phi^\prime$'
+set ylabel '$I$'
 
 # OLD commands
 #set view map
@@ -13,12 +16,9 @@ set cntrparam levels 15
 
 set view 73,350
 
-set xlabel "phi\'"
-set ylabel "I"
-
 set xrange [0:pi]
 
 splot "dL_dphip.res" u 2:1:3 with lines not
 
-set term pop
-set out
+unset out
+unset term

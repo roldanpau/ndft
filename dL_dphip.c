@@ -19,11 +19,11 @@ const int NPOINTS_PHI = 101;	/* num of points in the \phi' direction */
 int
 main (int argc, char *argv[])
 {
-    const int nfour=64;     /* Number of Fourier coeffs used in FFT */
-    const int ntori=5;      /* Number of tori used in numerical SM */
+    const int nfour=65;     /* Number of Fourier coeffs used in FFT */
+    const int ntori=8;      /* Number of tori used in numerical SM */
 
-    const int N=10; /* Degree of Fourier expansion */
-    const int M=3;  /* Degree of Taylor expansion */
+    const int N=4; /* Degree of Fourier expansion */
+    const int M=5;  /* Degree of Taylor expansion */
 
     double A[N+1];  /* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
     double B[N+1];  /* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
@@ -40,10 +40,10 @@ main (int argc, char *argv[])
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,ddA,ddB);
 
-  dI = (6.0-2.0)/(NPOINTS_I-1);
+  dI = (7.0-0.0)/(NPOINTS_I-1);
   for(i=0; i<NPOINTS_I; i++)
   {
-	  I = 2.0+i*dI;
+	  I = 0.0+i*dI;
 
     /* Compute F. coefs A_n(I) for action value I */
     coefs_eval(nfour,ntori,ddA,N,M,I,A);    
