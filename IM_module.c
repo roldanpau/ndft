@@ -23,10 +23,10 @@
 void IM(double I, double phi, double *Ip, double *phip)
 {
     double nu;   /* Interpolated nu value at I */
-    double nu2;   /* Interpolated nu value at I=2 */
-    double nu6;   /* Interpolated nu value at I=6 */
+    double nu0;   /* Interpolated nu value at I=0 */
+    double nu7;   /* Interpolated nu value at I=7 */
 
-	if(I<2 || I>6)	/* Initial condition is outside valid domain of IM */
+	if(I<=0 || I>7)	/* Initial condition is outside valid domain of IM */
 	{
 		fprintf(stderr, "I.C. outside valid domain of IM\n");
 		*Ip = I;
@@ -35,10 +35,10 @@ void IM(double I, double phi, double *Ip, double *phip)
 	}
 
     /* Compute nu(I) for action value I as the linear interpolation between 
-     * \f$\nu(I=2)\f$ and \f$\nu(I=6)\f$. */
-    nu2 = 2*M_PI*2.0168580747531935/2.0768829346313389;
-    nu6 = 2*M_PI*2.0158262483234082/2.0778794649847017;
-    nu = nu2*((6-I)/4) + nu6*((I-2)/4);
+     * \f$\nu(I=0)\f$ and \f$\nu(I=7)\f$. */
+    nu0 = 2*M_PI*2.0173992405867889e+00/2.0763641364824408e+00;
+    nu7 = 2*M_PI*2.0155777552071199e+00/2.0781208798199020e+00;
+    nu = nu0*((7-I)/7) + nu7*((I-0)/7);
 
 	/* Find the image (I', \phi') of (I,phi) by the inner map. */
     *phip = constrainAngle(phi + nu);

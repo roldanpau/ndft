@@ -8,7 +8,7 @@
   *		Taylor coeffs for omega are read from ddOmega.res, which was generated
   *		by T.
   *
-  * USAGE:	./diffusion 3 0
+  * USAGE:	./diffusion scaledI phi, for example ./diffusion 3 0
   *
   * CALLED BY:	
   *
@@ -26,15 +26,15 @@
 int
 main (int argc, char *argv[])
 {
-	const int nfour=64; 	/* Number of Fourier coeffs used in FFT */
-	const int ntori=5;		/* Number of tori used in numerical SM */
+	const int nfour=65; 	/* Number of Fourier coeffs used in FFT */
+	const int ntori=8;		/* Number of tori used in numerical SM */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
-    double ddOmega[ntori];      /* divided differences of omega(I) */
+    double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
-    const int N = 2;    /* Degree of Fourier series */
-    const int M = 2;    /* Degree of Taylor series */
+    const int N = 4;    /* Degree of Fourier series */
+    const int M = 5;    /* Degree of Taylor series */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
@@ -55,10 +55,10 @@ main (int argc, char *argv[])
     read_FT(nfour,ntori,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori,ddOmega);
+    read_T(ntori-1,ddOmega);
 
 	printf("%f %f %s\n", I, phi, "IM");
-    while(I<6)
+    while(I<7)
     {
         /* Here, trajactory is at a maximum of the SM */
 

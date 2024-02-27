@@ -1,5 +1,7 @@
+PAPERDIR=~/mat-nuvol/research/ndft-paper
+
 make
-./phase_port_SM 100 1000 1 > phase_port_SM.res
-./diffusion 2 3.14 > diffusion.res
+./phase_port_SM 0 7 100 1000 1 > phase_port_SM.res
+./diffusion 1 3.14 > diffusion.res
 gnuplot diffusion.plt
-mv diffusion.eps paper/images/
+mv diffusion.png $PAPERDIR/images/
