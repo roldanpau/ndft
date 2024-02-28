@@ -87,7 +87,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 
     double omega;   /* Interpolated omega value at I */
 
-	if(I<=0 || I>7)	/* Initial condition is outside known domain of SM */
+	if(I<=0 || I>8)	/* Initial condition is outside known domain of SM */
 	{
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;
@@ -136,7 +136,7 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 
     double omega;   /* Interpolated omega value at I */
 
-	if(I<=0 || I>7)	/* Initial condition is outside known domain of SM */
+	if(I<=0 || I>8)	/* Initial condition is outside known domain of SM */
 	{
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;

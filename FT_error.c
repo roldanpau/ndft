@@ -81,8 +81,8 @@ main (int argc, char *argv[])
 				coefs_eval(nfour,ntori,ddA,N,M,I,A);
 				coefs_eval(nfour,ntori,ddB,N,M,I,B);
 
-				sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-				sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+				sprintf(filename_dom, "curve2_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+				sprintf(filename_rng, "curve2_%d_%d_rng_0.res", (int)I+1, (int)I+1);
 
 				fp_dom = fopen(filename_dom, "r");
 				fp_rng = fopen(filename_rng, "r");
