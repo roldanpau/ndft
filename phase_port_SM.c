@@ -38,7 +38,7 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
-    const int N = 4;    /* Degree of Fourier series */
+    const int N = 6;    /* Degree of Fourier series */
     const int M = 5;    /* Degree of Taylor series */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
