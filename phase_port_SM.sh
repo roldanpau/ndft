@@ -19,6 +19,6 @@ make
 #mv phase_port_SM.eps paper/images/phase_port_SM_0.1_res57.eps
 #rm phase_port_SM.res
 
-./phase_port_SM 0 7 100 1000 1 > phase_port_SM.res
+./phase_port_SM 0 7.5 100 1000 1 > phase_port_SM.res
 gnuplot phase_port_SM.plt
 mv phase_port_SM.png $PAPERDIR/images/
