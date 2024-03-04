@@ -33,8 +33,8 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
-    const int N = 4;    /* Degree of Fourier series */
-    const int M = 5;    /* Degree of Taylor series */
+    const int N = 6;    /* Degree of Fourier series */
+    const int M = 2;    /* Degree of Taylor series */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
@@ -62,7 +62,7 @@ main (int argc, char *argv[])
     {
         /* Here, trajactory is at a maximum of the SM */
 
-        while(!(fabs(phi-1.75) < tol || fabs(phi-(M_PI+1.75)) < tol))
+        while(!(fabs(phi-2.6) < tol || fabs(phi-(M_PI+2.6)) < tol))
         {
             /* Compute the IM: (I, phi) -> (Ip, phip) */
             IM(I, phi, &Ip, &phip);
