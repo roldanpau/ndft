@@ -34,7 +34,7 @@ main (int argc, char *argv[])
     double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
     const int N = 6;    /* Degree of Fourier series */
-    const int M = 2;    /* Degree of Taylor series */
+    const int M = 3;    /* Degree of Taylor series */
 
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */

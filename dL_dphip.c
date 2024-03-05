@@ -23,7 +23,7 @@ main (int argc, char *argv[])
     const int ntori=8;      /* Number of tori used in numerical SM */
 
     const int N=6; /* Degree of Fourier expansion */
-    const int M=2;  /* Degree of Taylor expansion */
+    const int M=3;  /* Degree of Taylor expansion */
 
     double A[N+1];  /* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
     double B[N+1];  /* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
