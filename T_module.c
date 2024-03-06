@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_spline.h>
 
@@ -157,6 +158,7 @@ void omega_eval(size_t ntori, double dd[ntori], size_t M, double I, double
     d6 = dd[6];
 
     /* Interpolate omega at I */
+    assert(M<=6);
     switch(M)
     {
         case 0:

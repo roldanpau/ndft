@@ -32,8 +32,8 @@ main (int argc, char *argv[])
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
-	const int N=4;	/* Degree of Fourier expansion */
-	const int M=6;	/* Degree of Taylor expansion */
+	const int N=6;	/* Degree of Fourier expansion */
+	const int M=4;	/* Degree of Taylor expansion */
 
 	double Ap[N+1];	/* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double Bp[N+1];	/* Derivative of Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
