@@ -7,16 +7,20 @@
   *
   */
 
-void read_Fourier_coefs(size_t ntori, size_t nfour, 
+/** Specifies which scattering map (SM1 or SM2).
+  */
+typedef enum {SM1, SM2} SM_t;
+
+void read_Fourier_coefs(size_t ntori, size_t nfour, SM_t SM,
 		double A_all[ntori][nfour], double B_all[ntori][nfour]);
 
 void compute_FT(size_t ntori, size_t nfour, double coefs_all[ntori][nfour],
 		double dd[nfour][ntori]);
 
-void write_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
-		ddB[nfour][ntori]);
-void read_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
-		ddB[nfour][ntori]);
+void write_FT(size_t nfour, size_t ntori, SM_t SM, double ddA[nfour][ntori],
+		double ddB[nfour][ntori]);
+void read_FT(size_t nfour, size_t ntori, SM_t SM, double ddA[nfour][ntori],
+		double ddB[nfour][ntori]);
 
 void coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
 		size_t M, double I, double A[N+1]);

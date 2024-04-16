@@ -5,6 +5,9 @@
   *		Fourier coeffs are read from files coeffs_*.res, which were generated
   *		by fft.sh
   *
+  *		Do the same for the second scattering map, reading coeffs from files
+  *		coeffs_*_SM2.res, and writing coeffs to ddA_SM2.res and ddB_SM2.res.
+  *
   * CALLED BY: FT.c, FT_error.c	
   *
   */
@@ -15,6 +18,7 @@
 #include <assert.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_spline.h>
+#include "FT_module.h"		// SM_t
 
 static const char A2_FILE[] = "A2.res";
 static const char B2_FILE[] = "B2.res";
@@ -22,6 +26,13 @@ static const char A4_FILE[] = "A4.res";
 static const char B4_FILE[] = "B4.res";
 static const char ddA_FILE[] = "ddA.res";
 static const char ddB_FILE[] = "ddB.res";
+
+static const char A2_FILE_SM2[] = "A2_SM2.res";
+static const char B2_FILE_SM2[] = "B2_SM2.res";
+static const char A4_FILE_SM2[] = "A4_SM2.res";
+static const char B4_FILE_SM2[] = "B4_SM2.res";
+static const char ddA_FILE_SM2[] = "ddA_SM2.res";
+static const char ddB_FILE_SM2[] = "ddB_SM2.res";
 
 void write_Fourier_all_tori(size_t ntori, size_t nfour, 
 		double coefs_all[ntori][nfour], int four, const char *filename);
@@ -39,12 +50,14 @@ void write_Fourier_all_tori(size_t ntori, size_t nfour,
  *
  * @param[in]   ntori	Number of tori
  * @param[in]   nfour	Number of Fourier coefficients computed by FFT
+ * @param[in]   SM		SM1 or SM2
+ *
  * @param[out]  A_all	Table containing for each torus I, its Fourier coefs.
  * A_n.
  * @param[out]  B_all	Table containing for each torus I, its Fourier coefs.
  * B_n.
  */
-void read_Fourier_coefs(size_t ntori, size_t nfour, 
+void read_Fourier_coefs(size_t ntori, size_t nfour, SM_t SM,
 		double A_all[ntori][nfour], double B_all[ntori][nfour]) 
 {
 	/* auxiliary variables */
@@ -62,7 +75,9 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 	/* Read Fourier coeffs of all other tori from file */
 	for(int i=1; i<ntori; i++)
 	{
-		sprintf(filename, "coeffs_%d.res", i+1);
+		if(SM == SM1) sprintf(filename, "coeffs_%d.res", i+1);
+		else sprintf(filename, "coeffs_%d_SM2.res", i+1);
+
 		Ap = A_all[i];
 		Bp = B_all[i];
 
@@ -82,10 +97,20 @@ void read_Fourier_coefs(size_t ntori, size_t nfour,
 		fclose(fp);
 	}
 
-	write_Fourier_all_tori(ntori, nfour, A_all, 2, A2_FILE); 
-	write_Fourier_all_tori(ntori, nfour, B_all, 2, B2_FILE); 
-	write_Fourier_all_tori(ntori, nfour, A_all, 4, A4_FILE); 
-	write_Fourier_all_tori(ntori, nfour, B_all, 4, B4_FILE); 
+	if(SM == SM1)
+	{
+		write_Fourier_all_tori(ntori, nfour, A_all, 2, A2_FILE); 
+		write_Fourier_all_tori(ntori, nfour, B_all, 2, B2_FILE); 
+		write_Fourier_all_tori(ntori, nfour, A_all, 4, A4_FILE); 
+		write_Fourier_all_tori(ntori, nfour, B_all, 4, B4_FILE); 
+	}
+	else	// SM2
+	{	
+		write_Fourier_all_tori(ntori, nfour, A_all, 2, A2_FILE_SM2); 
+		write_Fourier_all_tori(ntori, nfour, B_all, 2, B2_FILE_SM2); 
+		write_Fourier_all_tori(ntori, nfour, A_all, 4, A4_FILE_SM2); 
+		write_Fourier_all_tori(ntori, nfour, B_all, 4, B4_FILE_SM2); 
+	}
 }
 
 /** 
@@ -185,15 +210,26 @@ void compute_FT(size_t ntori, size_t nfour, double coefs_all[ntori][nfour],
  *
  * @param[in]   nfour   Degree of the Fourier series = nfour-1.
  * @param[in]   ntori   Degree of the Taylor series = ntori-1.
+ * @param[in]   SM		SM1 or SM2
  *
  * @param[in]  ddA     Fourier-Taylor series (div. difs. of coefs A_j).
  * @param[in]  ddB     Fourier-Taylor series (div. difs. of coefs B_j).
  */
-void write_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
-		ddB[nfour][ntori])
+void write_FT(size_t nfour, size_t ntori, SM_t SM, double ddA[nfour][ntori],
+		double ddB[nfour][ntori])
 {
-    FILE *fpA = fopen(ddA_FILE, "w");
-    FILE *fpB = fopen(ddB_FILE, "w");
+	FILE *fpA;
+	FILE *fpB;
+	if(SM==SM1)
+	{
+		fpA = fopen(ddA_FILE, "w");
+		fpB = fopen(ddB_FILE, "w");
+	}
+	else // SM2
+	{
+		fpA = fopen(ddA_FILE_SM2, "w");
+		fpB = fopen(ddB_FILE_SM2, "w");
+	}
     for(int i=0; i<nfour; i++)
     {
         for(int j=0; j<ntori-1; j++)
@@ -215,15 +251,26 @@ void write_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
  *
  * @param[in]   nfour   Degree of the Fourier series = nfour-1.
  * @param[in]   ntori   Degree of the Taylor series = ntori-1.
+ * @param[in]   SM		SM1 or SM2
  *
  * @param[out]  ddA     Fourier-Taylor series (div. difs. of coefs A_j).
  * @param[out]  ddB     Fourier-Taylor series (div. difs. of coefs B_j).
  */
-void read_FT(size_t nfour, size_t ntori, double ddA[nfour][ntori], double
-		ddB[nfour][ntori])
+void read_FT(size_t nfour, size_t ntori, SM_t SM, double ddA[nfour][ntori],
+		double ddB[nfour][ntori])
 {
-    FILE *fpA = fopen(ddA_FILE, "r");
-    FILE *fpB = fopen(ddB_FILE, "r");
+	FILE *fpA;
+	FILE *fpB;
+	if(SM==SM1)
+	{
+		fpA = fopen(ddA_FILE, "w");
+		fpB = fopen(ddB_FILE, "w");
+	}
+	else // SM2
+	{
+		fpA = fopen(ddA_FILE_SM2, "w");
+		fpB = fopen(ddB_FILE_SM2, "w");
+	}
 
 	int nIt;	// Number of read items
     for(int i=0; i<nfour; i++)

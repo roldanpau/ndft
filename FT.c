@@ -3,7 +3,7 @@
   *
   * First and foremost, compute the coefficients of the Fourier-Taylor series,
   * in the form of divided differences ddA and ddB. Write them to file ddA.res
-  * and ddB.res.
+  * and ddB.res. 
   *
   * Given \f$ (I,\phi') \f$, find the value of the Fourier-Taylor series at
   * that point: 
@@ -17,7 +17,13 @@
   *
   * NOTES: 
   *		Fourier coeffs are read from files coeffs_*.res, which were generated
-  *		by fft.sh
+  *		by fft.sh. 
+  *
+  *		Do the same for the second scattering map, reading coeffs from files
+  *     coeffs_*_SM2.res, and writing coeffs to ddA_SM2.res and ddB_SM2.res.
+  *
+  *		For now, we use the same degree (N,N) of FT expansion for both SM1 and
+  *		SM2.
   *
   * USAGE:	./FT 2 0
   *
@@ -63,18 +69,37 @@ main (int argc, char *argv[])
     I = atof(argv[1]);	/* scaled action level, e.g. I=2 */
     phip = atof(argv[2]);	/* \phi' */
 
+
+	/*** Compute coefs of FT series for SM1 ***/
+
     /* Read table A_all, B_all with F. coefs of all tori */
-    read_Fourier_coefs(ntori, nfour, A_all, B_all);
+    read_Fourier_coefs(ntori, nfour, SM1, A_all, B_all);
 
     /* Compute FT series (divided differences) */
     compute_FT(ntori,nfour,A_all,ddA);	
     compute_FT(ntori,nfour,B_all,ddB);
 
     /* Write FT series (divided differences) to file */
-    write_FT(nfour,ntori,ddA,ddB);
+    write_FT(nfour,ntori,SM1,ddA,ddB);
+
+
+	/*** Compute coefs of FT series for SM2 ***/
+
+    /* Read table A_all, B_all with F. coefs of all tori */
+    read_Fourier_coefs(ntori, nfour, SM2, A_all, B_all);
+
+    /* Compute FT series (divided differences) */
+    compute_FT(ntori,nfour,A_all,ddA);	
+    compute_FT(ntori,nfour,B_all,ddB);
+
+    /* Write FT series (divided differences) to file */
+    write_FT(nfour,ntori,SM2,ddA,ddB);
+
+
+	/*** Evaluate FT series of SM1 at (I, phip) ***/
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,SM1,ddA,ddB);
 
 	/* Find the image I' of (I,phi) by the transition map. */
     coefs_eval(nfour,ntori,ddA,N,M,I,A);	/* Compute F. coefs A_n(I) for action value I */
@@ -87,5 +112,6 @@ main (int argc, char *argv[])
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);	/* Compute F. coefs B_n(I) for action value I */
 
     printf("%f %f %f\n", I, phip, dL_dI(N, Ap, Bp, phip));
+	
     return 0;
 }
