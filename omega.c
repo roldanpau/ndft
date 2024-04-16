@@ -66,8 +66,8 @@ main (int argc, char *argv[])
     dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);	/* Compute F. coefs A_n(I) for action value I */
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);	/* Compute F. coefs B_n(I) for action value I */
 
-	sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-	sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+	sprintf(filename_dom, "curve2_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+	sprintf(filename_rng, "curve2_%d_%d_rng_0.res", (int)I+1, (int)I+1);
 
 	fp_dom = fopen(filename_dom, "r");
 	fp_rng = fopen(filename_rng, "r");
