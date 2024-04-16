@@ -11,9 +11,12 @@
   * we output the whole orbit itself, to be plotted as dots.
   *
   * NOTES: 
+  *     Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *     argument.
   *
-  * USAGE:	./phase_port_SM Imin Imax 100 1000 0.1 > phase_port_SM.res
+  * USAGE:	./phase_port_SM 1 Imin Imax 100 1000 0.1 > phase_port_SM.res
   *
+  * CALLED_BY: phase_port_SM.sh
   */
 
 #include <stdlib.h>
@@ -23,6 +26,8 @@
 #include "T_module.h"
 #include "SM_module.h"
 
+static const char ddOmega_FILE[] = "ddOmega.res";
+static const char ddOmega_FILE_SM2[] = "ddOmega_SM2.res";
 
 int
 main (int argc, char *argv[])
@@ -38,32 +43,44 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
     double ddOmega[ntori-1];      /* divided differences of omega(I) */
 
-    const int N = 6;    /* Degree of Fourier series */
+    const int N = 4;    /* Degree of Fourier series */
     const int M = 5;    /* Degree of Taylor series */
 
+    SM_t bSM;			/* Which SM (SM1 or SM2) */
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
     double Imin, Imax;
 
-    if(argc != 6)
+    /* auxiliary vars */
+    int iSM;
+
+    if(argc != 7)
     {
 		fprintf(stderr, 
                 "Num of args incorrect. \
-               Usage: %s Imin Imax norbits niterations a\n", argv[0]);
+               Usage: %s SM Imin Imax norbits niterations a\n", argv[0]);
         exit(EXIT_FAILURE);
     }
-    Imin = atof(argv[1]);
-    Imax = atof(argv[2]);
-	norb = atoi(argv[3]);
-	nit = atoi(argv[4]);
-	a = atof(argv[5]);
+
+    iSM = atoi(argv[1]);
+    if(iSM==1)
+        bSM = SM1;
+    else
+        bSM = SM2;
+
+    Imin = atof(argv[2]);
+    Imax = atof(argv[3]);
+	norb = atoi(argv[4]);
+	nit = atoi(argv[5]);
+	a = atof(argv[6]);
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,ddOmega);
+    if(bSM==SM1)    read_T(ntori-1,ddOmega_FILE,ddOmega);
+    else            read_T(ntori-1,ddOmega_FILE_SM2,ddOmega);
 
 	/* Iterate over all orbits */
 	for(int i=0; i<= norb; i++)

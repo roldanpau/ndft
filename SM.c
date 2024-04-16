@@ -10,7 +10,10 @@
   *		Taylor coeffs for omega are read from ddOmega.res, which was generated
   *		by T.
   *
-  * USAGE:	./SM 2 0
+  *     Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *     argument.
+  *
+  * USAGE:	./SM 1 2 0 (SM1, action I=2, phi=0)
   *
   * CALLED BY:	
   *
@@ -22,6 +25,8 @@
 #include "T_module.h"
 #include "SM_module.h"
 
+static const char ddOmega_FILE[] = "ddOmega.res";
+static const char ddOmega_FILE_SM2[] = "ddOmega_SM2.res";
 
 int
 main (int argc, char *argv[])
@@ -36,24 +41,35 @@ main (int argc, char *argv[])
     const int N = 2;    /* Degree of Fourier series */
     const int M = 2;    /* Degree of Taylor series */
 
+	SM_t bSM;			/* Which SM (SM1 or SM2) */
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
-    if(argc != 3)
+    /* auxiliary vars */
+    int iSM;
+
+    if(argc != 4)
     {
-        fprintf(stderr, "Num of args incorrect. Usage: %s scaled_I phi\n",
+        fprintf(stderr, "Num of args incorrect. Usage: %s SM scaled_I phi\n",
               argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    I = atof(argv[1]);	    /* scaled action level, e.g. I=2 */
-    phi = atof(argv[2]);	/* \phi */
+	iSM = atoi(argv[1]);
+    if(iSM==1)
+        bSM = SM1;
+    else
+        bSM = SM2;
+
+    I = atof(argv[2]);	    /* scaled action level, e.g. I=2 */
+    phi = atof(argv[3]);	/* \phi */
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,ddOmega);
+	if(bSM==SM1)	read_T(ntori-1,ddOmega_FILE,ddOmega);
+	else			read_T(ntori-1,ddOmega_FILE_SM2,ddOmega);
 
 	/* Compute the SM: (I, phi) -> (Ip, phip) */
 	SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip);

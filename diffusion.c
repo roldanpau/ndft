@@ -8,7 +8,10 @@
   *		Taylor coeffs for omega are read from ddOmega.res, which was generated
   *		by T.
   *
-  * USAGE:	./diffusion scaledI phi, for example ./diffusion 3 0
+  *     Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *     argument.
+  *
+  * USAGE:	./diffusion 1 scaledI phi, for example ./diffusion 3 0
   *
   * CALLED BY:	
   *
@@ -22,6 +25,8 @@
 #include "SM_module.h"
 #include "IM_module.h"
 
+static const char ddOmega_FILE[] = "ddOmega.res";
+static const char ddOmega_FILE_SM2[] = "ddOmega_SM2.res";
 
 int
 main (int argc, char *argv[])
@@ -36,41 +41,76 @@ main (int argc, char *argv[])
     const int N = 4;    /* Degree of Fourier series */
     const int M = 5;    /* Degree of Taylor series */
 
+    SM_t bSM;           /* Which SM (SM1 or SM2) */
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
     const double tol=0.2;       /* Tolerance to be at a min/max of the SM */
 
-    if(argc != 3)
+    /* auxiliary vars */
+    int iSM;
+	double phi_old;
+
+    if(argc != 4)
     {
-        fprintf(stderr, "Num of args incorrect. Usage: %s scaled_I phi\n",
+        fprintf(stderr, "Num of args incorrect. Usage: %s SM scaled_I phi\n",
               argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    I = atof(argv[1]);	    /* scaled action level, e.g. I=2 */
-    phi = atof(argv[2]);	/* \phi */
+    iSM = atoi(argv[1]);
+    if(iSM==1)
+        bSM = SM1;
+    else
+        bSM = SM2;
+
+    I = atof(argv[2]);	    /* scaled action level, e.g. I=2 */
+    phi = atof(argv[3]);	/* \phi */
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,ddOmega);
+    if(bSM==SM1)    read_T(ntori-1,ddOmega_FILE,ddOmega);
+    else            read_T(ntori-1,ddOmega_FILE_SM2,ddOmega);
 
 	printf("%f %f %s\n", I, phi, "IM");
     while(I<7)
     {
         /* Here, trajactory is at a maximum of the SM */
 
-        while(!(fabs(phi-1.75) < tol || fabs(phi-(M_PI+1.75)) < tol))
-        {
-            /* Compute the IM: (I, phi) -> (Ip, phip) */
-            IM(I, phi, &Ip, &phip);
-            I = Ip;
-            phi = (phip>M_PI ? phip-M_PI : phip);
-            
-            printf("%f %f %s\n", I, phi, "IM");
-        }
+		if(bSM==SM1)
+		{
+			while(!(fabs(phi-1.75) < tol || fabs(phi-(M_PI+1.75)) < tol))
+			{
+				/* Compute the IM: (I, phi) -> (Ip, phip) */
+				IM(I, phi, &Ip, &phip);
+				I = Ip;
+				phi = (phip>M_PI ? phip-M_PI : phip);
+
+				printf("%f %f %s\n", I, phi, "IM");
+			}
+		}
+		else // bSM == SM2
+		{
+			while(!(fabs(phi-0.96) < tol || fabs(phi-(M_PI+0.96)) < tol))
+			{
+				phi_old = phi;
+
+				/* Compute the IM: (I, phi) -> (Ip, phip) */
+				IM(I, phi, &Ip, &phip);
+				I = Ip;
+				phi = (phip>M_PI ? phip-M_PI : phip);
+				
+				/* If angle phi wrapped around \pi, print newline. 
+				   This is a trick for correctly plotting line segments in
+				   diffusion_SM2.plt.
+				 */
+				if(phi_old<M_PI/2 && phi>M_PI/2) printf("\n");
+				
+				printf("%f %f %s\n", I, phi, "IM");
+			}
+		}
         /* Here, trajactory is at a minimum of the SM */
 
         //while(!(fabs(phi-0) < tol || fabs(phi-M_PI) < tol))
