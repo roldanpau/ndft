@@ -11,7 +11,10 @@
   * NOTES: 
   *		In principle, \f$ \omega(I) \f$ should be constant w.r.t. \f$ \phi \f$.
   *
-  * USAGE:	./omega 2 > omega.res
+  *		Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *		argument.
+  *
+  * USAGE:	./omega 1 2 > omega.res (SM1, action I=2).
   *
   * CALLED BY: omega_all.sh	
   *
@@ -33,11 +36,12 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
 	const int N=4;	/* Degree of Fourier expansion */
-	const int M=6;	/* Degree of Taylor expansion */
+	const int M=5;	/* Degree of Taylor expansion */
 
 	double Ap[N+1];	/* Derivative of Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
 	double Bp[N+1];	/* Derivative of Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
 
+	SM_t SM;		/* Which SM (SM1 or SM2) */
 	double I, phi;
 	double Ip, phip;	/* Numerical values of I', phi' */
 
@@ -47,27 +51,42 @@ main (int argc, char *argv[])
 	FILE *fp_dom;
 	FILE *fp_rng;
 	double Iaux, t;
+	int iSM;
 
 	double omega;
 	double omega_sum = 0;	// Sum of all omegas 
 	int num_omegas = 0;			// Number of omegas
 
-	if(argc != 2)
+	if(argc != 3)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s scaled_I\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM scaled_I\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
   
-	I = atof(argv[1]);	/* scaled action level, e.g. I=2 */
+	iSM = atoi(argv[1]);
+	if(iSM==1)
+		SM = SM1;
+	else
+		SM = SM2;
+
+	I = atof(argv[2]);	/* scaled action level, e.g. I=2 */
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,SM,ddA,ddB);
 
     dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);	/* Compute F. coefs A_n(I) for action value I */
     dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);	/* Compute F. coefs B_n(I) for action value I */
 
-	sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-	sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+	if(SM==SM1)
+	{
+		sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+		sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+	}
+	else // SM==SM2
+	{
+		sprintf(filename_dom, "curve2_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+		sprintf(filename_rng, "curve2_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+	}
 
 	fp_dom = fopen(filename_dom, "r");
 	fp_rng = fopen(filename_rng, "r");
