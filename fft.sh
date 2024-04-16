@@ -1,7 +1,7 @@
 PAPERDIR=~/mat-nuvol/research/ndft-paper
 IMGDIR=$PAPERDIR/images
 
-make
+make spline_interp fft
 
 # SM1
 for k in {2..8}

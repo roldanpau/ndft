@@ -263,13 +263,13 @@ void read_FT(size_t nfour, size_t ntori, SM_t SM, double ddA[nfour][ntori],
 	FILE *fpB;
 	if(SM==SM1)
 	{
-		fpA = fopen(ddA_FILE, "w");
-		fpB = fopen(ddB_FILE, "w");
+		fpA = fopen(ddA_FILE, "r");
+		fpB = fopen(ddB_FILE, "r");
 	}
 	else // SM2
 	{
-		fpA = fopen(ddA_FILE_SM2, "w");
-		fpB = fopen(ddB_FILE_SM2, "w");
+		fpA = fopen(ddA_FILE_SM2, "r");
+		fpB = fopen(ddB_FILE_SM2, "r");
 	}
 
 	int nIt;	// Number of read items
