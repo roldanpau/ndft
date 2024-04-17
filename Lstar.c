@@ -2,7 +2,11 @@
   * \brief Evaluate the function \f$ \widetilde{\mathcal{L}}(I,\phi') \f$ on a grid of \f$ (I,
   * \phi') \f$ points.
   *
-  * USAGE:	./Lstar > Lstar.res
+  *	NOTES:
+  *     Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *     argument.
+  *
+  * USAGE:	./Lstar 1 > Lstar.res (SM1)
   *
   */
 
@@ -23,7 +27,7 @@ main (int argc, char *argv[])
     const int ntori=8;      /* Number of tori used in numerical SM */
 
     const int N=4; /* Degree of Fourier expansion */
-    const int M=6;  /* Degree of Taylor expansion */
+    const int M=5;  /* Degree of Taylor expansion */
 
     double A[N+1];  /* Fourier coefficients A_0(I), A_1(I), ..., A_N(I) */
     double B[N+1];  /* Fourier coefficients B_0(I), B_1(I), ..., B_n(I) */
@@ -31,14 +35,29 @@ main (int argc, char *argv[])
     double ddA[nfour][ntori];   /* divided differences of Fourier coeffs A_n(I) */
     double ddB[nfour][ntori];   /* divided differences of Fourier coeffs B_n(I) */
 
+    SM_t bSM;           /* Which SM (SM1 or SM2) */
+
   double I, dI; 
   double Lst;
 
   int i,j;
   double phip, dphi;
 
+    /* auxiliary vars */
+    int iSM;
+
+	if(argc != 2)
+    {
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    iSM = atoi(argv[1]);
+	if(iSM==1) bSM = SM1;
+	else bSM = SM2;
+
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
   dI = (7.0-0.0)/(NPOINTS_I-1);
   for(i=0; i<NPOINTS_I; i++)
