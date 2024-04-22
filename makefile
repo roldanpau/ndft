@@ -7,7 +7,7 @@ progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		explore \
 		phase_port_SM \
 		IM \
-		diffusion diffusion_greedy
+		diffusion diffusion_greedy diffusion_triple_greedy
 
 objects = FT.o FT_module.o \
 		  FT_error.o \
@@ -23,7 +23,7 @@ objects = FT.o FT_module.o \
 		  explore.o \
 		  phase_port_SM.o \
 		  IM.o IM_module.o \
-		  diffusion.o diffusion_greedy.o
+		  diffusion.o diffusion_greedy.o diffusion_triple_greedy.o
 
 CFLAGS = -g #-O3
 LDFLAGS = -g #-O3
@@ -86,6 +86,8 @@ IM: IM.o IM_module.o T_module.o
 diffusion: diffusion.o SM_module.o FT_module.o T_module.o IM_module.o
 
 diffusion_greedy: diffusion_greedy.o SM_module.o FT_module.o T_module.o IM_module.o
+
+diffusion_triple_greedy: diffusion_triple_greedy.o SM_module.o FT_module.o T_module.o IM_module.o
 
 .PHONY : clean
 clean:
