@@ -11,11 +11,15 @@
   *
   * NOTES: 
   *		We measure only the error in the \f$ \phi \f$ component, not in
-  *		I. The error in \f$ I \f$ is measured in FT_error.c
+  *		\f$ I \f$. The error in \f$ I \f$ is measured in FT_error.c
   *
-  * USAGE:	./T_error Imax > T_error.res
+  *		Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *		argument.
   *
-  * CALLED BY:	
+  * USAGE:	./T_error SM Imax > T_error.res, for example
+  *			./T_error 1 7 > T_error.res
+  *
+  * CALLED BY: T_error.sh	
   *
   */
 
@@ -25,6 +29,9 @@
 #include "FT_module.h"
 #include "T_module.h"
 #include "SM_module.h"
+
+static const char ddOmega_FILE[] = "ddOmega.res";
+static const char ddOmega_FILE_SM2[] = "ddOmega_SM2.res";
 
 #define min(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -47,7 +54,8 @@ main (int argc, char *argv[])
 	double ddB[nfour][ntori];	
 	double ddOmega[ntori-1];	        /* divided differences of omega(I) */
 
-    double I, phi;      /* (I, \phi) = Point in the domain of the SM */
+	SM_t bSM;		/* Which SM (SM1 or SM2) */
+    double I, phi;  /* (I, \phi) = Point in the domain of the SM */
 
     /* (I', \phi') = Image of (I, phi) by the NUMERICAL SM */
     double Ip, phip;    
@@ -60,24 +68,33 @@ main (int argc, char *argv[])
 	double max_error;
 
 	/* auxiliary vars */
+	int iSM;
 	char filename_dom[100];
 	char filename_rng[100];
 	FILE *fp_dom;
 	FILE *fp_rng;
 	double Itor, t;
 
-	if(argc != 2)
+	if(argc != 3)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s Imax\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM Imax\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-    Imax = atoi(argv[1]);
+
+	iSM = atoi(argv[1]);
+	if(iSM==1)
+		bSM = SM1;
+	else
+		bSM = SM2;
+
+    Imax = atoi(argv[2]);
   
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,ddOmega);
+	if(bSM==SM1)	read_T(ntori-1,ddOmega_FILE,ddOmega);
+	else			read_T(ntori-1,ddOmega_FILE_SM2,ddOmega);
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
@@ -88,10 +105,20 @@ main (int argc, char *argv[])
 			/* We skip torus I=0, since error is 0 for that one */
             for(Itor=1; Itor<=Imax; Itor++)
             {
-                sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)Itor+1,
-                        (int)Itor+1);
-                sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)Itor+1,
-                        (int)Itor+1);
+				if(bSM==SM1)
+				{
+					sprintf(filename_dom, "curve1_%d_%d_dom_0.res", 
+							(int)Itor+1, (int)Itor+1);
+					sprintf(filename_rng, "curve1_%d_%d_rng_0.res", 
+							(int)Itor+1, (int)Itor+1);
+				}
+				else // SM==SM2
+				{
+					sprintf(filename_dom, "curve2_%d_%d_dom_0.res", 
+							(int)Itor+1, (int)Itor+1);
+					sprintf(filename_rng, "curve2_%d_%d_rng_0.res", 
+							(int)Itor+1, (int)Itor+1);
+				}
 
                 fp_dom = fopen(filename_dom, "r");
                 fp_rng = fopen(filename_rng, "r");

@@ -13,9 +13,13 @@
   *		We measure only the error in the I component, not in
   *		\f$ \phi \f$. The error in \f$ \phi \f$ is measured in T_error.c
   *
-  * USAGE:	./FT_error Imax > FT_error.res
+  *     Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *     argument.
   *
-  * CALLED BY:	
+  * USAGE:	./FT_error SM Imax > FT_error.res, for example
+  *			./FT_error 1 7 > FT_error.res
+  *
+  * CALLED BY: FT_error.sh	
   *
   */
 
@@ -41,6 +45,7 @@ main (int argc, char *argv[])
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
+    SM_t bSM;           /* Which SM (SM1 or SM2) */
 	int I;
 	double phi; 
 	double Ip, phip;	/* Numerical values of I', phi' */
@@ -50,21 +55,29 @@ main (int argc, char *argv[])
 	double max_error;
 
 	/* auxiliary vars */
+	int iSM;
 	char filename_dom[100];
 	char filename_rng[100];
 	FILE *fp_dom;
 	FILE *fp_rng;
 	double Iaux, t;
 
-	if(argc != 2)
+	if(argc != 3)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s Imax\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM Imax\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-    Imax = atoi(argv[1]);
+
+    iSM = atoi(argv[1]);
+    if(iSM==1)
+        bSM = SM1;
+    else
+        bSM = SM2;
+
+    Imax = atoi(argv[2]);
   
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,bSM,ddA,ddB);
 
 	for(int N=2; N<nfour; N+=2)	/* N = Degree of Fourier expansion */
     {
@@ -81,8 +94,16 @@ main (int argc, char *argv[])
 				coefs_eval(nfour,ntori,ddA,N,M,I,A);
 				coefs_eval(nfour,ntori,ddB,N,M,I,B);
 
-				sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
-				sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+				if(bSM==SM1)
+				{
+					sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+					sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+				}
+				else // SM==SM2
+				{
+					sprintf(filename_dom, "curve2_%d_%d_dom_0.res", (int)I+1, (int)I+1);
+					sprintf(filename_rng, "curve2_%d_%d_rng_0.res", (int)I+1, (int)I+1);
+				}
 
 				fp_dom = fopen(filename_dom, "r");
 				fp_rng = fopen(filename_rng, "r");

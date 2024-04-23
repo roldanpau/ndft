@@ -1,9 +1,9 @@
 /** \file omega.c
-  * \brief Given an action \f$ I \f$, find the shift of the transition map
+  * \brief Given an action \f$ I \f$, find the shift of the scattering map
   *
   * Let an action \f$ I \f$ be fixed. Read a set of points mapped by the
-  * transition map: \f$ (I,\phi) \to (I', \phi') \f$. For each point, find the
-  * shift of the transition map,
+  * scattering map: \f$ (I,\phi) \to (I', \phi') \f$. For each point, find the
+  * shift of the scattering map,
   * \f\[ \omega(I) = \phi-\phi'-d{\widetilde{L}}/d{I}. \f\]
   * Finally, average \f$ \omega(I) \f$ over all angles, and print result to
   * stdout.
@@ -46,12 +46,12 @@ main (int argc, char *argv[])
 	double Ip, phip;	/* Numerical values of I', phi' */
 
 	/* auxiliary vars */
+	int iSM;
 	char filename_dom[100];
 	char filename_rng[100];
 	FILE *fp_dom;
 	FILE *fp_rng;
 	double Iaux, t;
-	int iSM;
 
 	double omega;
 	double omega_sum = 0;	// Sum of all omegas 

@@ -29,8 +29,8 @@ echo "Done!"
 
 # SM2
 echo "Computing phase portrait of SM2..."
-#./phase_port_SM 2 0 7 100 1000 1 > phase_port_SM2.res
-./phase_port_SM 2 0 6 100 1000 1 > phase_port_SM2.res
+./phase_port_SM 2 0 7 100 1000 1 > phase_port_SM2.res
+#./phase_port_SM 2 0 6.5 100 1000 1 > phase_port_SM2.res
 gnuplot phase_port_SM2.plt
 mv phase_port_SM2.png $IMGDIR
 echo "Done!"
