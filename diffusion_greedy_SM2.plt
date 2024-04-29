@@ -1,15 +1,17 @@
+load "plotdefs.plt"
+
 set term png size 800,600
 set out "diffusion_greedy_SM2.png"
 
 set xlabel '$\phi$'
 set ylabel '$I$'
 
-plot [0:pi] "phase_port_SM2.res" u 2:1 pt 7 ps 0.1 not, \
-"diffusion_greedy_SM2.res" u 2:1 w l not, \
-"< awk '{if($3 == \"IM\") print}' diffusion_greedy_SM2.res" u 2:1 w p pt 3 lc 7 \
-t "inner map iterate", \
-"< awk '{if($3 == \"SM\") print}' diffusion_greedy_SM2.res" u 2:1 w p pt 5 lc 6 \
-t "scattering map iterate"
+plot [0:pi] "phase_port_SM2.res" u 2:1 ls PPSM2 not, \
+"diffusion_greedy_SM2.res" u 2:1 w l ls PO not, \
+"< awk '{if($3 == \"IM\") print}' diffusion_greedy_SM2.res" u 2:1 w p ls IM \
+t "IM iterate", \
+"< awk '{if($3 == \"SM\") print}' diffusion_greedy_SM2.res" u 2:1 w p ls SM2 \
+t "SM2 iterate"
 
 unset out
 unset term

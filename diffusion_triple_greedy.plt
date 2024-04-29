@@ -1,3 +1,5 @@
+load "plotdefs.plt"
+
 set term png size 800,600
 set out "diffusion_triple_greedy.png"
 
@@ -5,13 +7,15 @@ set xlabel '$\phi$'
 set ylabel '$I$'
 
 plot [0:pi] \
-"diffusion_triple_greedy.res" u 2:1 w l not, \
+"phase_port_SM.res" u 2:1 ls PPSM1 not, \
+"phase_port_SM2.res" u 2:1 ls PPSM2 not, \
+"diffusion_triple_greedy.res" u 2:1 w l ls PO not, \
 "< awk '{if($3 == \"IM\") print}' diffusion_triple_greedy.res" u 2:1 w p \
-pt 3 lc 7 t "IM iterate", \
+ls IM t "IM iterate", \
 "< awk '{if($3 == \"SM1\") print}' diffusion_triple_greedy.res" u 2:1 w p \
-pt 5 lc 6 t "SM1 iterate", \
+ls SM1 t "SM1 iterate", \
 "< awk '{if($3 == \"SM2\") print}' diffusion_triple_greedy.res" u 2:1 w p \
-pt 5 lc 8 t "SM2 iterate"
+ls SM2 t "SM2 iterate"
 
 unset out
 unset term

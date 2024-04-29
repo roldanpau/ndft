@@ -18,7 +18,7 @@
   *		of the IM, we don't iterate. In that case, the function silently
   *		returns \f$ (I, \phi) \f$ as the final condition.
   *
-  *		The output angle \f$\phi'\f$ is forced to be in \f$[0, 2\pi)\f$.
+  *		The output angle \f$\phi'\f$ is forced to be in \f$[0, \pi)\f$.
   */
 void IM(double I, double phi, double *Ip, double *phip)
 {

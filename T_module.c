@@ -17,12 +17,17 @@
 #include <gsl/gsl_spline.h>
 
 /** Constrain angle \f$ x \in [-2\pi, 2\pi) \f$ to be in \f$ [0, 2\pi) \f$.
+  * Then, further constrain angle to \f$ [0, \pi) \f$.
  *
  */
 double constrainAngle(double x){
     x = fmod(x,2*M_PI);
     if (x < 0)
         x += 2*M_PI;
+
+	/* Further constrain to [0,\pi) */
+	if (x>= M_PI) 
+		x -= M_PI;
     return x;
 }
 

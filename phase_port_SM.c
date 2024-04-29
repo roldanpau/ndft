@@ -54,6 +54,7 @@ main (int argc, char *argv[])
 
     /* auxiliary vars */
     int iSM;
+	int ierr;
 
     if(argc != 7)
     {
@@ -95,12 +96,15 @@ main (int argc, char *argv[])
 			/* Iterate the SM nit times */
 			for(int it=0; it<nit; it++)
 			{
-				damped_SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip, a);
+				if(damped_SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi,
+						&Ip, &phip, a) != SUCCESS) {
+					break;	/* Continue with next orbit */
+				}
 				I = Ip;
 				phi = phip;
 
 				/* Output iterate */
-				printf("%f %f\n", Ip, phip);
+				if(Ip <= 8) printf("%f %f\n", Ip, phip);
 			}
 //		}
 	}

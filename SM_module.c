@@ -13,6 +13,9 @@
 #include "FT_module.h"
 #include "T_module.h"
 
+const int SUCCESS = 0;
+const int ERR_IC_OUTSIDE_DOM = 1;
+
 /** \brief Iteratively find \f$ \phi' = F(\phi'; I, \phi) \f$.
  *
  *  Variable \f$ \phi' \f$ is defined implicitly by equation
@@ -73,8 +76,10 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we don't iterate. In that case, the function silently
   *		returns \f$ (I, \phi) \f$ as the final condition.
+  *
+  * \return SUCCESS or ERR_IC_OUTSIDE_DOM when IC is outside domain of SM.
   */
-void SM(int nfour, int ntori, double ddA[nfour][ntori], 
+int SM(int nfour, int ntori, double ddA[nfour][ntori], 
         double ddB[nfour][ntori], double ddOmega[ntori-1], int N, int M, double
         I, double phi, double *Ip, double *phip)
 {
@@ -93,7 +98,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;
 		*phip = phi;
-		return;
+		return ERR_IC_OUTSIDE_DOM;
 	}
 
     /* Compute Fourier coefs A_n(I), B_n(I) for action value I */
@@ -110,6 +115,7 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
     *phip = iteration(N, Ap, Bp, omega, phi);
     *Ip = I + dL_dphi(N, A, B, *phip);
+	return SUCCESS;
 }
 
 
@@ -123,8 +129,10 @@ void SM(int nfour, int ntori, double ddA[nfour][ntori],
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
+  *
+  * \return SUCCESS or ERR_IC_OUTSIDE_DOM when IC is outside domain of SM.
   */
-void damped_SM(int nfour, int ntori, double ddA[nfour][ntori], 
+int damped_SM(int nfour, int ntori, double ddA[nfour][ntori], 
         double ddB[nfour][ntori], double ddOmega[ntori-1], int N, int M, double
         I, double phi, double *Ip, double *phip, double a)
 {
@@ -143,7 +151,7 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 		fprintf(stderr, "I.C. outside known domain of SM\n");
 		*Ip = I;
 		*phip = phi;
-		return;
+		return ERR_IC_OUTSIDE_DOM;
 	}
 
     /* Compute Fourier coefs A_n(I), B_n(I) for action value I */
@@ -160,6 +168,7 @@ void damped_SM(int nfour, int ntori, double ddA[nfour][ntori],
 	/* Find the image (I', \phi') of (I,phi) by the transition map. */
     *phip = damped_iteration(N, Ap, Bp, omega, phi, a);
     *Ip = I + a*dL_dphi(N, A, B, *phip);
+	return SUCCESS;
 }
 
 
