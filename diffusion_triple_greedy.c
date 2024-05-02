@@ -79,19 +79,22 @@ main (int argc, char *argv[])
 		SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip1, &phip1);
 		SM(nfour, ntori, ddA_SM2, ddB_SM2, ddOmega_SM2, N, M, I, phi, &Ip2, &phip2);
 
-		if(Ip1>=Ip2 && Ip2>I)	/* Accept SM1 iterate */
+		if(Ip1>I || Ip2>I)
 		{
-			I = Ip1;
-			phi = (phip1>M_PI ? phip1-M_PI : phip1);
-			
-			printf("%f %f %s\n", I, phi, "SM1");
-		}
-		else if(Ip2>Ip1 && Ip1>I)	/* Accept SM2 iterate */
-		{
-			I = Ip2;
-			phi = (phip2>M_PI ? phip2-M_PI : phip2);
-			
-			printf("%f %f %s\n", I, phi, "SM2");
+			if(Ip1>=Ip2)	/* Accept SM1 iterate */
+			{
+				I = Ip1;
+				phi = (phip1>M_PI ? phip1-M_PI : phip1);
+				
+				printf("%f %f %s\n", I, phi, "SM1");
+			}
+			else // Ip2>Ip1)	/* Accept SM2 iterate */
+			{
+				I = Ip2;
+				phi = (phip2>M_PI ? phip2-M_PI : phip2);
+				
+				printf("%f %f %s\n", I, phi, "SM2");
+			}
 		}
 		else		/* Reject SM iterate. Take IM iterate instead. */
 		{
