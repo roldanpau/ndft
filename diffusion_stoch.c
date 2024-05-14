@@ -14,10 +14,10 @@
   *     Caller must specify which SM to use (SM1 or SM2) as a command-line
   *     argument.
   *
-  * USAGE:	./diffusion SM scaledI phi, for example 
-  *			./diffusion 1 2.5 3.14
+  * USAGE:	./diffusion_stoch SM scaledI phi, for example 
+  *			./diffusion_stoch 1 2.5 3.14
   *
-  * CALLED BY:	
+  * CALLED BY: diffusion_stoch.sh
   *
   */
 
