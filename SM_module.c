@@ -1,7 +1,8 @@
 /** \file SM_module.c
   * \brief Functions to compute the scattering map \f$ (I', \phi') = \sigma(I,\phi) \f$.
   *
-  *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
+  *	The degree (N,M) of the Fourier-Taylor series are provided as parameters to
+  *	functions SM, damped_SM.
   *
   * CALLED BY: SM, SM_given_I
   *
@@ -70,8 +71,8 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   * \brief Compute the scattering map \f$ (I', \phi') = \sigma(I,\phi) \f$.
   *
   * NOTE:
-  *		The degree of the Fourier-Taylor expansion used is \f$N, L\f$ (hardcoded
-  *		at the beginning of this file).
+  *		The degree of the Fourier-Taylor expansion used is \f$N, M\f$ (provided
+  *		as parameters to this function).
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we don't iterate. In that case, the function silently
@@ -124,8 +125,8 @@ int SM(int nfour, int ntori, double ddA[nfour][ntori],
   * parameter \f$a\f$.
   *
   * NOTE:
-  *		The degree of the Fourier-Taylor expansion used is \f$N, L\f$ (hardcoded
-  *		at the beginning of this file).
+  *		The degree of the Fourier-Taylor expansion used is \f$N, M\f$ (provided
+  *		as parameters to this function).
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)

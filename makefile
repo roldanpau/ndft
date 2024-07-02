@@ -8,7 +8,7 @@ progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		phase_port_SM \
 		IM \
 		diffusion diffusion_greedy diffusion_triple_greedy \
-		dijkstra diffusion_shortest_path \
+		dijkstra diffusion_shortest_path diffusion_shortest_path_TM \
 		diffusion_stoch
 
 objects = FT.o FT_module.o \
@@ -21,12 +21,14 @@ objects = FT.o FT_module.o \
 		  T.o T_module.o \
 		  T_error.o \
 		  SM.o SM_module.o \
+		  TM_module.o \
 		  SM_given_I.o \
 		  explore.o \
 		  phase_port_SM.o \
 		  IM.o IM_module.o \
 		  diffusion.o diffusion_greedy.o diffusion_triple_greedy.o \
 		  dijkstra.o dijkstra_module.o diffusion_shortest_path.o \
+		  diffusion_shortest_path_TM.o \
 		  diffusion_stoch.o
 
 CFLAGS = -g #-O3
@@ -97,6 +99,9 @@ dijkstra: dijkstra.o dijkstra_module.o
 
 diffusion_shortest_path: diffusion_shortest_path.o SM_module.o FT_module.o \
 	T_module.o IM_module.o dijkstra_module.o
+
+diffusion_shortest_path_TM: diffusion_shortest_path_TM.o TM_module.o \
+	SM_module.o FT_module.o T_module.o IM_module.o dijkstra_module.o
 
 diffusion_stoch: diffusion_stoch.o SM_module.o FT_module.o T_module.o IM_module.o
 	gcc -o diffusion_stoch -g diffusion_stoch.c SM_module.c FT_module.c \
