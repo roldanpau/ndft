@@ -1,6 +1,6 @@
 PAPERDIR=~/mat-nuvol/research/ndft-paper
 
-make
+make SM_given_I
 
 for i in {1..7}
 do

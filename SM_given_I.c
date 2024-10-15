@@ -19,11 +19,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>		// M_PI
-#include "FT_module.h"
+#include "FT_module.h"	// SM_t SM1/SM2, read_FT
 #include "T_module.h"
 #include "SM_module.h"
 
 static const int NPOINTS = 100;
+static const char ddOmega_FILE[] = "ddOmega.res";
 
 int
 main (int argc, char *argv[])
@@ -51,10 +52,10 @@ main (int argc, char *argv[])
     I = atof(argv[1]);	    /* scaled action level, e.g. I=2 */
 
     /* Read FT series (divided differences) from file */
-    read_FT(nfour,ntori,ddA,ddB);
+    read_FT(nfour,ntori,SM1,ddA,ddB);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori-1,ddOmega);
+    read_T(ntori-1,ddOmega_FILE,ddOmega);
 
 	double dphi = 2*M_PI/(NPOINTS-1);
 	for(int i=0; i<NPOINTS; i++)
