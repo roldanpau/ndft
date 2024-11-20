@@ -1,5 +1,5 @@
-/** \file dLstar_dI
-  * \brief Given I, find \f$\pd{\tilde{L}}{I} (I,\phi')\f$ at several points \phi'.
+/** \file max_dLtilde_dI
+  * \brief For each I=1..7, find \f$ \max \lvert \pd{\tilde{L}}{I} (I,\phi') \rvert \f$ over all points \phi'.
   *
   *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
   *
@@ -8,8 +8,8 @@
   *     argument.
   *
   * USAGE:
-  *		./dLstar_dI SM scaled_I > outfile
-  *		./dLstar_dI 1 2 > dL_dI_I_2.dat
+  *		./max_dLtilde_dI SM > outfile
+  *		./max_dLtilde_dI 1 > max_dLtilde_dI.res
   *
   * CALLED BY: 
   *
@@ -17,7 +17,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>	// M_PI
+#include <math.h>	// M_PI, fmax, fabs
 
 #include "FT_module.h"
 
@@ -33,8 +33,8 @@ main (int argc, char *argv[])
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
-	const int N=4;	/* Degree of Fourier expansion */
-	const int M=5;	/* Degree of Taylor expansion */
+	int N;	/* Degree of Fourier expansion */
+	int M;	/* Degree of Taylor expansion */
 
     SM_t bSM;           /* Which SM (SM1 or SM2) */
 
@@ -46,35 +46,43 @@ main (int argc, char *argv[])
     /* auxiliary vars */
     int iSM;
 	double dphi;
+	double max_val;
 
-	if(argc != 3)
+	if(argc != 2)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s SM scaled_I\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
   
     iSM = atoi(argv[1]);
     if(iSM==1)
+	{
         bSM = SM1;
+		N=4; M=5;
+	}
     else
+	{
         bSM = SM2;
-
-	I = atof(argv[2]);	/* scaled action level, e.g. I=2 */
+		N=4; M=6;
+	}
 
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,bSM,ddA,ddB);
 
-	/* Compute derivative of F. coefs A_n(I), B_n(I) for action value I */
-    dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);
-    dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
-
-	dphi = 2*M_PI/(NPOINTS-1);
-	for(int i=0; i<NPOINTS; i++)
+	for(I=1; I<=7; I+=1)
 	{
-		phip = i*dphi;
+		/* Compute derivative of F. coefs A_n(I), B_n(I) for action value I */
+		dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);
+		dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
 
-		/* Find dL_dphi(I,phi'). */
-		printf("%f %f %f\n", I, phip, dL_dI(N, Ap, Bp, phip));
+		dphi = 2*M_PI/(NPOINTS-1);
+		max_val = 0;
+		for(int i=0; i<NPOINTS; i++)
+		{
+			phip = i*dphi;
+			max_val = fmax(max_val, fabs(dL_dI(N, Ap, Bp, phip)));
+		}
+		printf("%f %f\n", I, max_val);
 	}
 	return 0;
 }
