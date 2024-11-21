@@ -13,3 +13,5 @@ void read_T(size_t ntori, const char *fn, double dd[ntori]);
 
 void omega_eval(size_t ntori, double dd[ntori], size_t M, double I, double
         *omega_p);
+void domega_eval(size_t ntori, double dd[ntori], size_t M, double I, double
+        *domega_p); 

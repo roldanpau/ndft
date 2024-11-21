@@ -212,3 +212,90 @@ void omega_eval(size_t ntori, double dd[ntori], size_t M, double I, double
     }
 }
 
+/** 
+ * \brief Evaluate derivative of omega at I using derivative of Taylor series.
+ *
+ * @param[in]   ntori   Max degree of the Taylor series of omega = ntori-1.
+ * @param[in]   dd      Complete Taylor series (div. difs. of omega).
+ * @param[in]   M       Degree of the Taylor series.
+ * @param[in]   I       Action at which we want to evaluate.
+ *
+ * @param[out]  omega_p     On exit, it points to the value omega'(I).
+ */
+void domega_eval(size_t ntori, double dd[ntori], size_t M, double I, double
+        *domega_p) 
+{
+    const double I0=1;
+    const double I1=2;
+    const double I2=3;
+    const double I3=4;
+    const double I4=5;
+    const double I5=6;
+
+    double d0, d1, d2, d3, d4, d5, d6;
+    d0 = dd[0];
+    d1 = dd[1];
+    d2 = dd[2];
+    d3 = dd[3];
+    d4 = dd[4];
+    d5 = dd[5];
+    d6 = dd[6];
+
+    /* Compute derivative of omega at I */
+    assert(M<=6);
+    switch(M)
+    {
+        case 0:
+            *domega_p = 0;
+            break;
+        case 1:
+            *domega_p = d1;
+            break;
+        case 2: 
+            *domega_p = d1 + d2*((I-I1)+(I-I0));
+            break;
+        case 3:
+            *domega_p = d1 + d2*((I-I1)+(I-I0)) +
+                d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1));
+            break;
+        case 4:
+            *domega_p =  d1 + d2*((I-I1)+(I-I0)) +
+                d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+                d4*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+                        (I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2));
+            break;
+        case 5:
+            *domega_p =  d1 + 
+                d2*((I-I1)+(I-I0)) +
+                d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+                d4*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+                        (I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2)) +
+                d5*((I-I1)*(I-I2)*(I-I3)*(I-I4) + 
+                        (I-I0)*(I-I2)*(I-I3)*(I-I4) +
+                        (I-I0)*(I-I1)*(I-I3)*(I-I4) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I4) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I3));
+            break;
+        case 6:
+            *domega_p =  d1 + 
+                d2*((I-I1)+(I-I0)) +
+                d3*((I-I1)*(I-I2) + (I-I0)*(I-I2) + (I-I0)*(I-I1)) +
+                d4*((I-I1)*(I-I2)*(I-I3) + (I-I0)*(I-I2)*(I-I3) +
+                        (I-I0)*(I-I1)*(I-I3) + (I-I0)*(I-I1)*(I-I2)) +
+                d5*((I-I1)*(I-I2)*(I-I3)*(I-I4) + 
+                        (I-I0)*(I-I2)*(I-I3)*(I-I4) +
+                        (I-I0)*(I-I1)*(I-I3)*(I-I4) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I4) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I3)) +
+                d6*((I-I1)*(I-I2)*(I-I3)*(I-I4)*(I-I5) + 
+                        (I-I0)*(I-I2)*(I-I3)*(I-I4)*(I-I5) +
+                        (I-I0)*(I-I1)*(I-I3)*(I-I4)*(I-I5) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I4)*(I-I5) + 
+                        (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I5) +
+                        (I-I0)*(I-I1)*(I-I2)*(I-I3)*(I-I4));
+            break;
+        default:
+            break;
+    }
+}
+
