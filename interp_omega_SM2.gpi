@@ -1,0 +1,11 @@
+set term tikz
+set out "interp_omega_SM2.tex"
+
+set xlabel '$I$'
+set ylabel '$\omega(I)$'
+
+plot "omega_all_SM2.res" w p ps 3 not, \
+"interp_poly_omega_M6_SM2" w l not
+
+unset out
+unset term

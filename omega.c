@@ -14,7 +14,9 @@
   *		Caller must specify which SM to use (SM1 or SM2) as a command-line
   *		argument.
   *
-  * USAGE:	./omega 1 2 > omega.res (SM1, action I=2).
+  * USAGE:	
+  *		./omega SM I > omega.res
+  *		./omega 1 2 > omega.res (SM1, action I=2).
   *
   * CALLED BY: omega_all.sh	
   *

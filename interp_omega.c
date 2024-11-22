@@ -11,10 +11,13 @@
   * extrapolating the polynomial to a larger range).
   *
   * NOTES: 
+  *		Caller must specify which SM to use (SM1 or SM2) as a command-line
+  *		argument.
   *
   * USAGE:	
-  *		./interp_omega 2 > interp_poly_omega_M2
-  *		./interp_omega 3 > interp_poly_omega_M3
+  *		./interp_omega SM I > outfile
+  *		./interp_omega 1 2 > interp_poly_omega_M2
+  *		./interp_omega 1 3 > interp_poly_omega_M3
   *
   * CALLED BY:	
   *
@@ -23,31 +26,46 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "T_module.h"
+#include "FT_module.h"	// SM_t
+
+static const char ddOmega_FILE[] = "ddOmega.res";
+static const char ddOmega_FILE_SM2[] = "ddOmega_SM2.res";
 
 int
 main (int argc, char *argv[])
 {
-	const int ntori=7;		/* Number of tori used in numerical SM */
-
-    double dd[ntori];           /* divided differences of omega(I) */
-
+	const int ntori=8;		/* Number of tori used in numerical SM */
+    double dd[ntori];       /* divided differences of omega(I) */
+	SM_t bSM;				/* Which SM (SM1 or SM2) */
+	int M;					/* M = Degree of Taylor expansion */
+	
+	/* auxiliary vars */
+	int iSM;
 	double I;
-
-	if(argc != 2)
+	
+	if(argc != 3)
 	{
-		fprintf(stderr, "Num of args incorrect. Usage: %s deg\n", argv[0]);
+		fprintf(stderr, "Num of args incorrect. Usage: %s SM deg\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
-	int M = atoi(argv[1]);	/* M = Degree of Taylor expansion */
+
+	iSM = atoi(argv[1]);
+	if(iSM==1)
+		bSM = SM1;
+	else
+		bSM = SM2;
+
+	M = atoi(argv[2]);
 
     /* Read Taylor series (divided differences) from file */
-    read_T(ntori,dd);
+	if(bSM==SM1)	read_T(ntori-1,ddOmega_FILE,dd);
+	else			read_T(ntori-1,ddOmega_FILE_SM2,dd);
 
     double omega;   /* omega(I) */
 	for(I=1; I<=7; I += 0.1)
 	{
 		/* Compute omega(I) for action value I */
-		omega_eval(ntori,dd,M,I,&omega);
+		omega_eval(ntori-1,dd,M,I,&omega);
 		printf("%g %g\n", I, omega);
 	}
 	return 0;
