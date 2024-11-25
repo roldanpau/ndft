@@ -1,11 +1,9 @@
-/** \file interp_omega.c
-  * \brief Find approximating polynomial to \f$\omega(I)\f$.
+/** \file interp_domega.c
+  * \brief Find approximating polynomial to \f$ \pd{\omega}{I}(I)\f$ and plot it.
   *
-  * Given the data \f$\omega(I=1), dotsc, \omega(I=7)\f$, find the best
-  * approximating polynomial \f$ P(I) \f$ of degree \f$M \leq 6 \f$ to those
-  * values.
-  * Given the desired degree \f$M\f$, interpolate the \f$ M+1 \f$ first points
-  * to obtain \f$ P(I) \f$. 
+  * Approximating polynomial is found by derivating the series of 
+  * \f$ \omega(I) \f$.
+  * 
   * Then evaluate interpolating polynomial \f$ P(I) \f$ at many points (for
   * later plotting P) in the range \f$ I=1 \f$ to \f$ I=7 \f$. (Effectively
   * extrapolating the polynomial to a larger range).
@@ -14,13 +12,16 @@
   *		Caller must specify which SM to use (SM1 or SM2) as a command-line
   *		argument.
   *
+  *		Degree deg is the degree of omega's series, not the degree of the
+  *		derivative series.
+  *
   * USAGE:	
-  *		./interp_omega SM deg > outfile
-  *		./interp_omega 1 2 > interp_poly_omega_M2
-  *		./interp_omega 1 3 > interp_poly_omega_M3
+  *		./interp_domega SM deg > outfile
+  *		./interp_domega 1 5 > interp_poly_domega_M5
+  *     ./interp_domega 2 6 > interp_poly_domega_M6_SM2
   *
   * CALLED BY:	
-  *     interp_omega.sh
+  *     interp_domega.sh
   *
   */
 
@@ -62,12 +63,12 @@ main (int argc, char *argv[])
 	if(bSM==SM1)	read_T(ntori-1,ddOmega_FILE,dd);
 	else			read_T(ntori-1,ddOmega_FILE_SM2,dd);
 
-    double omega;   /* omega(I) */
+    double domega;   /* \pd{\omega}{I} */
 	for(I=1; I<=7; I += 0.1)
 	{
-		/* Compute omega(I) for action value I */
-		omega_eval(ntori-1,dd,M,I,&omega);
-		printf("%g %g\n", I, omega);
+		/* Compute derivative for action value I */
+		domega_eval(ntori-1,dd,M,I,&domega);
+		printf("%g %g\n", I, domega);
 	}
 	return 0;
 }

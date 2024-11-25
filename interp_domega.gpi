@@ -1,0 +1,14 @@
+#set term tikz
+#set out "interp_domega.tex"
+set term post eps
+set out "interp_domega.eps"
+
+set xlabel '$I$'
+set ylabel '$\pd{\omega(I)}{I}$'
+
+plot \
+"interp_poly_domega_M5" w l not, \
+"interp_poly_domega_M6_SM2" w l not
+
+unset out
+unset term
