@@ -1,0 +1,22 @@
+#set term tikz
+#set out "twist.tex"
+set term png
+set out "twist.png"
+
+set xlabel '$I$'
+
+plot "twist.res" u 1:2 w l not, \
+"twist.res" u 1:($2+$3) w l not ls 2, \
+"twist.res" u 1:($2-$3) w l not ls 2
+
+#set out "twist_SM2.tex"
+set out "twist_SM2.png"
+
+set xlabel '$I$'
+
+plot "twist_SM2.res" u 1:2 w l not, \
+"twist_SM2.res" u 1:($2+$3) w l not ls 2, \
+"twist_SM2.res" u 1:($2-$3) w l not ls 2
+
+unset out
+unset term

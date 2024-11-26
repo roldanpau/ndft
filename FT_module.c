@@ -470,6 +470,68 @@ void dcoefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], size_t N,
     }
 }
 
+/** 
+ * \brief Evaluate SECOND derivative of Fourier coefs A_j (or B_j) at I using Taylor interpolation.
+ *
+ * @param[in]   nfour   Max degree of the Fourier series = nfour-1.
+ * @param[in]   ntori   Max degree of the Taylor series = ntori-1.
+ * @param[in]   ddA Complete Fourier-Taylor series (div. difs. of Fourier coeffs).
+ * @param[in]   N   Degree of the Fourier series.
+ * @param[in]   M   Degree of the Taylor series.
+ * @param[in]   I   Action at which we want to evaluate.
+ * @param[out]  App   SECOND derivative of Fourier coefs A_j(I) (or B_j(I)).
+ */
+void d2coefs_eval(size_t nfour, size_t ntori, double ddA[nfour][ntori], 
+		size_t N, size_t M, double I, double App[N+1]) 
+{
+	const double I0=0;
+	const double I1=1;
+	const double I2=2;
+	const double I3=3;
+	const double I4=4;
+	const double I5=5;
+	const double I6=6;
+
+    double d0, d1, d2, d3, d4, d5, d6, d7;
+	for(int j=0; j<=N; j++)
+    {
+		d0 = ddA[j][0];
+		d1 = ddA[j][1];
+		d2 = ddA[j][2];
+		d3 = ddA[j][3];
+		d4 = ddA[j][4];
+		d5 = ddA[j][5];
+		d6 = ddA[j][6];
+		d7 = ddA[j][7];
+
+        /* Interpolate F. coef A_j' at I */
+        assert(M<=7);
+        switch(M)
+        {
+            case 0:
+            case 1:
+                App[j] = 0;
+                break;
+            case 2:
+                App[j] = 2*d2;
+                break;
+            case 3: 
+                App[j] = 2*d2 + 2*d3*((I-I0)+(I-I1)+(I-I2));
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                App[j] = 2*d2 + 2*d3*((I-I0)+(I-I1)+(I-I2)) + 
+					2*d4*((I-I0)*(I-I1)+(I-I0)*(I-I2)+(I-I0)*(I-I3)+
+							(I-I1)*(I-I2)+(I-I1)*(I-I3)+(I-I2)*(I-I3));
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 /**
  * \brief Given \f$(I,\phi')\f$, find \f$pd{\widetilde{L}}{\phi'}(I,\phi)\f$
  *
@@ -502,6 +564,24 @@ double dL_dI(size_t N, double Ap[N+1], double Bp[N+1], double phi)
 	for(int j=1; j<=N; j++)
 	{
 		res = res + (Ap[j]/j*sin(j*phi) - Bp[j]/j*cos(j*phi));
+	}
+	return res;
+}
+
+/**
+ * \brief Given \f$ (I,\phi') \f$, find \f$ pd[2]{\widetilde{L}}{I}(I,\phi) \f$
+ *
+ * @param[in] N		Degree of Fourier series
+ * @param[in] App	A'' = (A_0'', A_1'', ..., A_N''), A_k'' := d^2A_k/dI^2(I)
+ * @param[in] Bpp	B'' = (B_0'', B_1'', ..., B_N''), B_k'' := d^2B_k/dI^2(I)
+ * @param[in] phi	Angle where to evaluate the second partial derivative.
+ */
+double d2L_dI(size_t N, double App[N+1], double Bpp[N+1], double phi)
+{
+	double res = 0.0;
+	for(int j=1; j<=N; j++)
+	{
+		res = res + (App[j]/j*sin(j*phi) - Bpp[j]/j*cos(j*phi));
 	}
 	return res;
 }

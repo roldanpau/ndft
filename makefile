@@ -10,7 +10,7 @@ progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		diffusion diffusion_greedy diffusion_triple_greedy \
 		dijkstra diffusion_shortest_path diffusion_shortest_path_TM \
 		diffusion_stoch \
-		max_dLtilde_dI
+		max_dLtilde_dI max_d2Ltilde_dI
 
 objects = FT.o FT_module.o \
 		  FT_error.o \
@@ -31,10 +31,10 @@ objects = FT.o FT_module.o \
 		  dijkstra.o dijkstra_module.o diffusion_shortest_path.o \
 		  diffusion_shortest_path_TM.o \
 		  diffusion_stoch.o \
-		  max_dLtilde_dI.o
+		  max_dLtilde_dI.o max_d2Ltilde_dI.o
 
-CFLAGS = -g #-O3
-LDFLAGS = -g #-O3
+CFLAGS = -O3 #-g #-O3
+LDFLAGS = -O3 #-g #-O3
 LDLIBS = -lm -lgsl -lgslcblas
 
 all: $(progs)
@@ -112,6 +112,8 @@ diffusion_stoch: diffusion_stoch.o SM_module.o FT_module.o T_module.o IM_module.
 	T_module.c IM_module.c -lgsl -lm
 
 max_dLtilde_dI: max_dLtilde_dI.o FT_module.o
+
+max_d2Ltilde_dI: max_d2Ltilde_dI.o FT_module.o
 
 .PHONY : clean
 clean:
