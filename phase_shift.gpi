@@ -5,18 +5,18 @@ set out "phase_shift.png"
 
 set xlabel '$I$'
 
-plot "phase_shift.res" u 1:2 w lp not, \
-"phase_shift.res" u 1:($2+$3) w lp not ls 2, \
-"phase_shift.res" u 1:($2-$3) w lp not ls 2
+plot "phase_shift.res" u 1:2 w l not, \
+"phase_shift.res" u 1:($2+$3) w l not ls 2, \
+"phase_shift.res" u 1:($2-$3) w l not ls 2
 
 #set out "max_dLtilde_dI_SM2.tex"
 set out "phase_shift_SM2.png"
 
 set xlabel '$I$'
 
-plot "phase_shift_SM2.res" u 1:2 w lp not, \
-"phase_shift_SM2.res" u 1:($2+$3) w lp not ls 2, \
-"phase_shift_SM2.res" u 1:($2-$3) w lp not ls 2, \
+plot "phase_shift_SM2.res" u 1:2 w l not, \
+"phase_shift_SM2.res" u 1:($2+$3) w l not ls 2, \
+"phase_shift_SM2.res" u 1:($2-$3) w l not ls 2, \
 pi w l not
 
 unset out

@@ -1,5 +1,5 @@
 /** \file max_dLtilde_dI
-  * \brief For each I=1..7, find \f$ \max \lvert \pd{\tilde{L}}{I} (I,\phi') \rvert \f$ over all points \phi'.
+  * \brief For each I\in[1,7] find \f$ \max \lvert \pd{\tilde{L}}{I} (I,\phi') \rvert \f$ over all points \phi'.
   *
   *	The degree (N,M) of the Fourier-Taylor series can be modified in the code.
   *
@@ -47,7 +47,7 @@ main (int argc, char *argv[])
     /* auxiliary vars */
     int iSM;
 	double dphi;
-	double max_val;
+	double val,max_val;
 
 	if(argc != 2)
 	{
@@ -70,18 +70,19 @@ main (int argc, char *argv[])
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,bSM,ddA,ddB);
 
-	for(I=1; I<=7; I+=1)
-	{
+    for(I=1; I<=7; I += 0.1)
+    {
 		/* Compute derivative of F. coefs A_n(I), B_n(I) for action value I */
 		dcoefs_eval(nfour,ntori,ddA,N,M,I,Ap);
 		dcoefs_eval(nfour,ntori,ddB,N,M,I,Bp);
 
-		dphi = 2*M_PI/(NPOINTS-1);
 		max_val = 0;
+		dphi = 2*M_PI/(NPOINTS-1);
 		for(int i=0; i<NPOINTS; i++)
 		{
 			phip = i*dphi;
-			max_val = fmax(max_val, fabs(dL_dI(N, Ap, Bp, phip)));
+			val = fabs(dL_dI(N, Ap, Bp, phip));
+			max_val = fmax(max_val, val);
 		}
 		printf("%f %f\n", I, max_val);
 	}

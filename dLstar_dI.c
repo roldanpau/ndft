@@ -33,8 +33,8 @@ main (int argc, char *argv[])
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
 
-	const int N=4;	/* Degree of Fourier expansion */
-	const int M=5;	/* Degree of Taylor expansion */
+	int N;	/* Degree of Fourier expansion */
+	int M;	/* Degree of Taylor expansion */
 
     SM_t bSM;           /* Which SM (SM1 or SM2) */
 
@@ -55,11 +55,17 @@ main (int argc, char *argv[])
   
     iSM = atoi(argv[1]);
     if(iSM==1)
+	{
         bSM = SM1;
+		N=4; M=5;
+	}
     else
+	{
         bSM = SM2;
+		N=4; M=6;
+	}
 
-	I = atof(argv[2]);	/* scaled action level, e.g. I=2 */
+    I = atof(argv[2]);      /* scaled action level, e.g. I=2 */
 
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,bSM,ddA,ddB);

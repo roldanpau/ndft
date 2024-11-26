@@ -33,8 +33,8 @@ objects = FT.o FT_module.o \
 		  diffusion_stoch.o \
 		  max_dLtilde_dI.o
 
-CFLAGS = -O3 #-g
-LDFLAGS = -O3 #-g
+CFLAGS = -g #-O3
+LDFLAGS = -g #-O3
 LDLIBS = -lm -lgsl -lgslcblas
 
 all: $(progs)
