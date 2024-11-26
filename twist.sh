@@ -16,4 +16,4 @@ paste -d ' ' <(cat interp_poly_domega_M6_SM2) \
 	<(cut -d ' ' -f 2 max_d2Ltilde_dI_SM2.res) >twist_SM2.res
 
 gnuplot twist.gpi
-#mv max_dLtilde_dI.tex max_dLtilde_dI_SM2.tex $IMGDIR
+mv twist.tex twist_SM2.tex $IMGDIR

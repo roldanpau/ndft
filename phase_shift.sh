@@ -14,4 +14,4 @@ paste -d ' ' <(cat interp_poly_omega_M5) <(cut -d ' ' -f 2 max_dLtilde_dI.res) >
 paste -d ' ' <(cat interp_poly_omega_M6_SM2) <(cut -d ' ' -f 2 max_dLtilde_dI_SM2.res) >phase_shift_SM2.res
 
 gnuplot phase_shift.gpi
-#mv max_dLtilde_dI.tex max_dLtilde_dI_SM2.tex $IMGDIR
+mv phase_shift.tex phase_shift_SM2.tex $IMGDIR

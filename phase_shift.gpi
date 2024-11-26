@@ -1,23 +1,23 @@
-#set term tikz
-#set out "max_dLtilde_dI.tex"
-set term png
-set out "phase_shift.png"
+set term tikz
+set out "phase_shift.tex"
+#set term png
+#set out "phase_shift.png"
 
 set xlabel '$I$'
 
-plot "phase_shift.res" u 1:2 w l not, \
-"phase_shift.res" u 1:($2+$3) w l not ls 2, \
-"phase_shift.res" u 1:($2-$3) w l not ls 2
+plot "phase_shift.res" u 1:2 w l dashtype 2 lc 1 t '$\omega(I)$', \
+"phase_shift.res" u 1:($2+$3) w l not lc 2, \
+"phase_shift.res" u 1:($2-$3) w l t '$\omega(I) \pm \max_{\phi\prime} \abs{\pd{\gft}{I}(I,\phi\prime)}$' lc 2
 
-#set out "max_dLtilde_dI_SM2.tex"
-set out "phase_shift_SM2.png"
+set out "phase_shift_SM2.tex"
+#set out "phase_shift_SM2.png"
 
 set xlabel '$I$'
 
-plot "phase_shift_SM2.res" u 1:2 w l not, \
-"phase_shift_SM2.res" u 1:($2+$3) w l not ls 2, \
-"phase_shift_SM2.res" u 1:($2-$3) w l not ls 2, \
-pi w l not
+plot "phase_shift_SM2.res" u 1:2 w l dashtype 2 lc 1 t '$\omega(I)$', \
+"phase_shift_SM2.res" u 1:($2+$3) w l not lc 2, \
+"phase_shift_SM2.res" u 1:($2-$3) w l t '$\omega(I) \pm \max_{\phi\prime} \abs{\pd{\gft}{I}(I,\phi\prime)}$' lc 2, \
+pi w l t '$\pi$'
 
 unset out
 unset term
