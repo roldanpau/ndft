@@ -1,0 +1,24 @@
+set term tikz
+set out "twist.tex"
+#set term png
+#set out "twist.png"
+
+set xlabel '$I$'
+
+plot "twist.res" u 1:2 w l dashtype 2 lc 1 t '$\omega\prime(I)$', \
+"twist.res" u 1:($2+$3) w l not lc 2, \
+"twist.res" u 1:($2-$3) w l t '$\omega\prime(I) \pm \max_{\phi\prime} \abs{\pd[2]{\gft}{I}(I,\phi\prime)}$' lc 2
+
+
+set out "twist_SM2.tex"
+#set out "twist_SM2.png"
+
+set xlabel '$I$'
+
+plot "twist_SM2.res" u 1:2 w l dashtype 2 lc 1 t '$\omega\prime(I)$', \
+"twist_SM2.res" u 1:($2+$3) w l not lc 2, \
+"twist_SM2.res" u 1:($2-$3) w l t '$\omega\prime(I) \pm \max_{\phi\prime} \abs{\pd[2]{\gft}{I}(I,\phi\prime)}$' lc 2
+
+
+unset out
+unset term

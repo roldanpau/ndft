@@ -587,6 +587,24 @@ double d2L_dI(size_t N, double App[N+1], double Bpp[N+1], double phi)
 }
 
 /**
+ * \brief Given \f$(I,\phi')\f$, find \f$md{\widetilde{L}}{2}{\phi'}{1}{I}{1}(I,\phi')\f$
+ *
+ * @param[in] N		Degree of Fourier series
+ * @param[in] Ap	A' = (A_0', A_1', ..., A_N'), A_k' := dA_k/dI(I)
+ * @param[in] Bp	B' = (B_0', B_1', ..., B_N'), B_k' := dB_k/dI(I)
+ * @param[in] phi	Angle where to evaluate the partial derivative.
+ */
+double d2L_dphidI(size_t N, double Ap[N+1], double Bp[N+1], double phi)
+{
+	double res = 0.0;
+	for(int j=1; j<=N; j++)
+	{
+		res = res + (Ap[j]*cos(j*phi) + Bp[j]*sin(j*phi));
+	}
+	return res;
+}
+
+/**
  * \brief Given \f$(I,\phi')\f$, find \f$\widetilde{L}(I,\phi')\f$
  *
  * @param[in] N		Degree of Fourier series
