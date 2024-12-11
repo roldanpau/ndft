@@ -7,10 +7,10 @@ make T_error
 
 # SM1
 ./T_error 1 7 > T_error.res
-gnuplot T_error.plt
-mv T_error.tex $IMGDIR
+#gnuplot T_error.plt
+#mv T_error.tex $IMGDIR
 
 # SM1
 ./T_error 2 7 > T_error_SM2.res
-gnuplot T_error_SM2.plt
-mv T_error_SM2.tex $IMGDIR
+#gnuplot T_error_SM2.plt
+#mv T_error_SM2.tex $IMGDIR

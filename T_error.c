@@ -135,21 +135,25 @@ main (int argc, char *argv[])
                     /* Scale I (I's are not scaled in curve1_%d_%d_dom_0.res) */
                     I = I*1000;
                     Ip = Ip*1000;
+
+					/* Take angle mod \pi, due to periodicity */
+					phip = constrainAngle(phip);
                 
                     /* (2) Compute approximate SM using FT model. */
                     SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &tIp,
                             &tphip);
 
+					/*
+                    printf("Num. SM: (%f %f) -> %f \t Approx. SM: (%f %f) -> %f\n", 
+                            I, phi, phip, 
+                            I, phi, tphip);
+							*/
+
                     /* (3) Find max approximation error over all points on
                      * torus I */
 					error = constrainAngle(tphip - phip);
-					error = (error<M_PI ? error : 2*M_PI - error);
+					error = (error<M_PI/2 ? error : M_PI - error);
                     if(error>max_error_tor) max_error_tor = error;
-                    /*
-                    printf("Num. SM: (%f %f) -> %f \t Approx. SM: (%f %f) -> %f\n", 
-                            Iaux, phip, Ip, 
-                            Iaux, phip, Ip_approx);
-                            */
                     //printf("%f\n", error);
                 }
                 fclose(fp_dom);

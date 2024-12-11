@@ -78,6 +78,9 @@ double damped_iteration(size_t N, double Ap[N+1], double Bp[N+1], double omega,
   *		of the SM, we don't iterate. In that case, the function silently
   *		returns \f$ (I, \phi) \f$ as the final condition.
   *
+  *		The angle \f$ \phi' \f$ is returned in [0,\pi), since the SM is
+  *		\pi-periodic.
+  *
   * \return SUCCESS or ERR_IC_OUTSIDE_DOM when IC is outside domain of SM.
   */
 int SM(int nfour, int ntori, double ddA[nfour][ntori], 
@@ -130,6 +133,9 @@ int SM(int nfour, int ntori, double ddA[nfour][ntori],
   *
   *		If the initial condition \f$ (I, \phi) \f$ is outside the known domain
   *		of the SM, we DO iterate. (To see what happens above/below tori [2,4].)
+  *
+  *		The angle \f$ \phi' \f$ is returned in [0,\pi), since the SM is
+  *		\pi-periodic.
   *
   * \return SUCCESS or ERR_IC_OUTSIDE_DOM when IC is outside domain of SM.
   */

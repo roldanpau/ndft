@@ -19,7 +19,7 @@
   * USAGE:	./FT_error SM Imax > FT_error.res, for example
   *			./FT_error 1 7 > FT_error.res
   *
-  * CALLED BY: FT_error.sh	
+  * CALLED BY: FT_error.sh, FT_error_local.sh
   *
   */
 
