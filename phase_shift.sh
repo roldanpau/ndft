@@ -1,4 +1,4 @@
-PAPERDIR=~/mat-nuvol/research/ndft-paper
+PAPERDIR=~/research/ndft-paper
 IMGDIR=$PAPERDIR/images
 
 make max_dLtilde_dI
