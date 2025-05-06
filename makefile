@@ -1,8 +1,8 @@
 progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		dLstar_dI Lstar dL_dphip omega \
-		FT FT_error_given_I FT_error \
+		FT FT_error_given_I FT_error FT_newerror \
 		interp_coef interp_omega interp_domega\
-		T T_error \
+		T T_error T_newerror\
 		SM SM_given_I \
 		explore \
 		phase_port_SM \
@@ -13,14 +13,14 @@ progs = lin_interp spline_interp fft fdd Fourier_coefs_given_I \
 		max_dLtilde_dI max_d2Ltilde_dI twist
 
 objects = FT.o FT_module.o \
-		  FT_error.o \
+		  FT_error.o FT_newerror.o \
 		  interp_coef.o interp_omega.o interp_domega.o \
 		  dLstar_dI.o \
 		  Lstar.o \
 		  dL_dphip.o \
 		  omega.o \
 		  T.o T_module.o \
-		  T_error.o \
+		  T_error.o T_newerror.o \
 		  SM.o SM_module.o \
 		  TM_module.o \
 		  SM_given_I.o \
@@ -73,6 +73,8 @@ FT_error_given_I: FT_error_given_I.c
 
 FT_error: FT_error.o FT_module.o
 
+FT_newerror: FT_newerror.o FT_module.o
+
 interp_coef: interp_coef.o FT_module.o
 
 interp_omega: interp_omega.o T_module.o
@@ -82,6 +84,8 @@ interp_domega: interp_domega.o T_module.o
 T: T.o T_module.o 
 
 T_error: T_error.o T_module.o FT_module.o SM_module.o
+
+T_newerror: T_newerror.o T_module.o FT_module.o SM_module.o
 
 SM: SM.o SM_module.o FT_module.o T_module.o
 

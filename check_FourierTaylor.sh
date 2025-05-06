@@ -1,8 +1,8 @@
-PAPERDIR=~/mat-nuvol/research/ndft-paper
+PAPERDIR=~/research/ndft-paper
 
 make SM_given_I
 
-for i in {1..7}
+for i in `seq 0 0.5 7`
 do
 	./SM_given_I $i > SM_I_$i.dat
 	sort -g -k 1,1 SM_I_$i.dat > SM_I_$i.dat.new
