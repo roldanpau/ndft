@@ -39,7 +39,6 @@ main (int argc, char *argv[])
 
 	int norb;	/* Number of orbits */
 	int nit;	/* Number of iterations of the SM */
-	double a;	/* Perturbation parameter (size of non-integrable part) */
 
 	double ddA[nfour][ntori];	/* divided differences of Fourier coeffs A_n(I) */
 	double ddB[nfour][ntori];	/* divided differences of Fourier coeffs B_n(I) */
@@ -50,19 +49,24 @@ main (int argc, char *argv[])
 
     SM_t bSM;			/* Which SM (SM1 or SM2) */
     double I, phi;      /* (I, \phi) = Point in the domain of the SM */
+    double I2, phi2;      /* (I, \phi) = Point in the domain of the SM */
     double Ip, phip;    /* (I', \phi') = Image of (I, phi) by the SM */
 
     double Imin, Imax;
 
+	double le;	/* lyapunov exponent */
+	double dev=1.e-1;	/* initial deviation of second orbit |phi-phi2| */
+
     /* auxiliary vars */
     int iSM;
 	int ierr;
+	double dist;
 
-    if(argc != 7)
+    if(argc != 6)
     {
 		fprintf(stderr, 
                 "Num of args incorrect. \
-               Usage: %s SM Imin Imax norbits niterations a\n", argv[0]);
+               Usage: %s SM Imin Imax norbits niterations\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -82,7 +86,6 @@ main (int argc, char *argv[])
     Imax = atof(argv[3]);
 	norb = atoi(argv[4]);
 	nit = atoi(argv[5]);
-	a = atof(argv[6]);
 
     /* Read FT series (divided differences) from file */
     read_FT(nfour,ntori,bSM,ddA,ddB);
@@ -92,29 +95,42 @@ main (int argc, char *argv[])
     else            read_T(ntori-1,ddOmega_FILE_SM2,ddOmega);
 
 	/* Iterate over all orbits */
-	for(int i=0; i<= norb; i++)
+	for(int i=0; i< norb; i++)
 	{
-//		for(int j=0; j<= norb; j++)
-//		{
-			/* Initialize initial condition */
-			I = Imin+i*(Imax-Imin)/norb;
-//			phi = j*2*M_PI/norb;
-			phi=0;
+		/* Initialize initial condition */
+		//I = Imin+i*(Imax-Imin)/norb;
+		I=7.0; I2=I;
+		phi=i*(M_PI/norb); phi2=phi+dev;
 
-			/* Iterate the SM nit times */
-			for(int it=0; it<nit; it++)
-			{
-				if(damped_SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi,
-						&Ip, &phip, a) != SUCCESS) {
-					break;	/* Continue with next orbit */
-				}
-				I = Ip;
-				phi = phip;
+		dist=dev;
+		le = 0;
+		printf("%f %f %f %f %f %f\n", I, phi, I2, phi2, dist, le);
 
-				/* Output iterate */
-				if(Ip <= 8) printf("%f %f\n", Ip, phip);
+		/* Iterate the SM nit times */
+		for(int it=0; it<nit; it++)
+		{
+			if(SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi, &Ip, &phip) !=
+					SUCCESS) {
+				break;	/* Continue with next orbit */
 			}
-//		}
+			I = Ip;
+			phi = phip;
+
+			if(SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I2, phi2, &Ip, &phip) !=
+					SUCCESS) {
+				break;	/* Continue with next orbit */
+			}
+			I2 = Ip;
+			phi2 = phip;
+
+			dist = fabs(phi-phi2);
+			le += log(dist/dev);
+
+			/* Output iterate, dist, lyap.exp */
+			if(Ip <= 8) printf("%f %f %f %f %f %f\n", I, phi, I2, phi2, dist,
+					le/(it+1));
+		}
+		printf("\n\n");
 	}
     return 0;
 }
