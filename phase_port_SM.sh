@@ -1,4 +1,4 @@
-PAPERDIR=~/mat-nuvol/research/ndft-paper
+PAPERDIR=~/research/ndft-paper
 IMGDIR=$PAPERDIR/images
 
 make phase_port_SM
@@ -22,15 +22,19 @@ make phase_port_SM
 
 # SM1
 echo "Computing phase portrait of SM1..."
-./phase_port_SM 1 0 7.5 100 1000 1 > phase_port_SM.res
+./phase_port_SM 1 0 7 300 100 1 > phase_port_SM.res
+echo "Calling gnuplot..."
 gnuplot phase_port_SM.plt
 mv phase_port_SM.png phase_port_SM.tex $IMGDIR
 echo "Done!"
+rm phase_port_SM.res
 
 # SM2
 echo "Computing phase portrait of SM2..."
-./phase_port_SM 2 0 7 100 1000 1 > phase_port_SM2.res
+./phase_port_SM 2 0 7 300 100 1 > phase_port_SM2.res
 #./phase_port_SM 2 0 6.5 100 1000 1 > phase_port_SM2.res
+echo "Calling gnuplot..."
 gnuplot phase_port_SM2.plt
 mv phase_port_SM2.png phase_port_SM2.tex $IMGDIR
 echo "Done!"
+rm phase_port_SM2.res

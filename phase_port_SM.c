@@ -94,16 +94,20 @@ main (int argc, char *argv[])
 	/* Iterate over all orbits */
 	for(int i=0; i<= norb; i++)
 	{
-//		for(int j=0; j<= norb; j++)
-//		{
-			/* Initialize initial condition */
-			I = Imin+i*(Imax-Imin)/norb;
-//			phi = j*2*M_PI/norb;
-			phi=0;
+		/* Initialize initial condition */
+		I = Imin+i*(Imax-Imin)/norb;
+		//phi=0;
+		for(int j=0; j< norb; j++)
+		{
+			phi = j*M_PI/norb;
 
 			/* Iterate the SM nit times */
 			for(int it=0; it<nit; it++)
 			{
+				// Skip first 10 (transient) iterates
+				//if(it<10)
+				//	continue;	
+
 				if(damped_SM(nfour, ntori, ddA, ddB, ddOmega, N, M, I, phi,
 						&Ip, &phip, a) != SUCCESS) {
 					break;	/* Continue with next orbit */
@@ -114,7 +118,7 @@ main (int argc, char *argv[])
 				/* Output iterate */
 				if(Ip <= 8) printf("%f %f\n", Ip, phip);
 			}
-//		}
+		}
 	}
     return 0;
 }
