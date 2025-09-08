@@ -88,9 +88,9 @@ main (int argc, char *argv[])
 			/* We skip torus I=0, since error is 0 for that one */
             for(Itor=1; Itor<=Imax; Itor++)
             {
-                sprintf(filename_dom, "curve1_%d_%d_dom_0.res", (int)Itor+1,
+                sprintf(filename_dom, "curve2_%d_%d_dom_0.res", (int)Itor+1,
                         (int)Itor+1);
-                sprintf(filename_rng, "curve1_%d_%d_rng_0.res", (int)Itor+1,
+                sprintf(filename_rng, "curve2_%d_%d_rng_0.res", (int)Itor+1,
                         (int)Itor+1);
 
                 fp_dom = fopen(filename_dom, "r");
